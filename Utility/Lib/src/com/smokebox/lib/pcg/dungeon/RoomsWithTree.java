@@ -1,0 +1,29 @@
+/**
+ * 
+ */
+package com.smokebox.lib.pcg.dungeon;
+
+import java.util.ArrayList;
+
+import com.smokebox.lib.syne.shape.Rectangle;
+
+/**
+ * @author Harald Floor Wilhelmsen
+ *
+ */
+public class RoomsWithTree {
+
+	public Tree t;
+	public ArrayList<Cell> rooms;
+	public ArrayList<Cell> roomsOld;
+	public ArrayList<Rectangle> corridors;
+	
+	// TODO find a better way to pass the map as an object, and delete this class
+	
+	public RoomsWithTree(Tree t, ArrayList<Cell> rooms, ArrayList<Cell> roomsOld, ArrayList<Rectangle> corridors) {
+		this.t = t;
+		this.rooms = rooms;
+		this.roomsOld = roomsOld;
+		this.corridors = corridors;
+	}
+}
