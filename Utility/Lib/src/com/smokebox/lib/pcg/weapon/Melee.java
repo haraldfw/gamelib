@@ -1,6 +1,6 @@
 package com.smokebox.lib.pcg.weapon;
 
-import com.smokebox.lib.syne.shape.Triangle;
+import com.smokebox.lib.utils.geom.Triangle;
 
 /**
  * @author Harald Floor Wilhelmsen

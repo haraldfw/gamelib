@@ -1,4 +1,4 @@
-package com.smokebox.lib.syne.shape;
+package com.smokebox.lib.utils.geom;
 
 import com.smokebox.lib.utils.Vector2;
 

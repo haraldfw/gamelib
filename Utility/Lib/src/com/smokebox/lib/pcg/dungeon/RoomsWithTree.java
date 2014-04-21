@@ -5,7 +5,7 @@ package com.smokebox.lib.pcg.dungeon;
 
 import java.util.ArrayList;
 
-import com.smokebox.lib.syne.shape.Rectangle;
+import com.smokebox.lib.utils.geom.Rectangle;
 
 /**
  * @author Harald Floor Wilhelmsen

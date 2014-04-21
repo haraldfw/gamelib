@@ -1,7 +1,7 @@
 package com.smokebox.lib.pcg.dungeon;
 
-import com.smokebox.lib.syne.shape.Rectangle;
 import com.smokebox.lib.utils.Vector2;
+import com.smokebox.lib.utils.geom.Rectangle;
 
 /**
  * @author Harald Floor Wilhelmsen

@@ -2,10 +2,10 @@ package com.smokebox.lib.utils;
 
 import java.util.ArrayList;
 
-import com.smokebox.lib.syne.shape.Circle;
-import com.smokebox.lib.syne.shape.Line;
-import com.smokebox.lib.syne.shape.Ray;
-import com.smokebox.lib.syne.shape.Rectangle;
+import com.smokebox.lib.utils.geom.Circle;
+import com.smokebox.lib.utils.geom.Line;
+import com.smokebox.lib.utils.geom.Ray;
+import com.smokebox.lib.utils.geom.Rectangle;
 
 public class Intersect {
 	/**

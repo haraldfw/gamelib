@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smokebox.lib.syne.shape;
+package com.smokebox.lib.utils.geom;
 
 /**
  * @author Harald Floor Wilhelmsen

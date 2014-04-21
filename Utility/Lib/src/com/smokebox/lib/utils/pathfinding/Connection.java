@@ -3,7 +3,7 @@
  */
 package com.smokebox.lib.utils.pathfinding;
 
-import com.smokebox.lib.syne.shape.Line;
+import com.smokebox.lib.utils.geom.Line;
 
 /**
  * @author Harald Floor Wilhelmsen

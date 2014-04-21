@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.smokebox.lib.syne.entity;
+package com.smokebox.lib.utils.geom;
 
 import com.smokebox.lib.utils.Vector2;
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.smokebox.lib.syne.shape.Line;
 import com.smokebox.lib.utils.MathUtils;
+import com.smokebox.lib.utils.geom.Line;
 
 /**
  * @author Harald Floor Wilhelmsen

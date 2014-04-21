@@ -8,11 +8,11 @@ import java.util.Collections;
 
 import com.smokebox.lib.pcg.dungeon.Cell;
 import com.smokebox.lib.pcg.dungeon.RoomsWithTree;
-import com.smokebox.lib.syne.shape.Line;
-import com.smokebox.lib.syne.shape.Rectangle;
 import com.smokebox.lib.utils.Intersect;
 import com.smokebox.lib.utils.MathUtils;
 import com.smokebox.lib.utils.Vector2;
+import com.smokebox.lib.utils.geom.Line;
+import com.smokebox.lib.utils.geom.Rectangle;
 import com.smokebox.lib.utils.geom.UnifiablePolyedge;
 
 /**

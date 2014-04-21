@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Random;
 
 import com.smokebox.lib.utils.Vector2;
-import com.smokebox.lib.syne.shape.Line;
-import com.smokebox.lib.syne.shape.Rectangle;
 import com.smokebox.lib.utils.Intersect;
+import com.smokebox.lib.utils.geom.Line;
+import com.smokebox.lib.utils.geom.Rectangle;
 
 /**
  * @author Harald Floor Wilhelmsen

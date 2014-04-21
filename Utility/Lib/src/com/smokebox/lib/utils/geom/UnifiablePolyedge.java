@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.smokebox.lib.syne.shape.Line;
 import com.smokebox.lib.utils.Vector2;
 
 /**
