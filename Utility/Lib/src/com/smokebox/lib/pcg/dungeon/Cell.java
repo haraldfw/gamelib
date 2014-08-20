@@ -19,7 +19,7 @@ public class Cell {
 	}
 	
 	public void applyForces() {
-		rect.addToPosition(forceAccumulation.round());
+		rect.addToPosition(forceAccumulation);
 	}
 	
 	public void addForce(Vector2 force) {

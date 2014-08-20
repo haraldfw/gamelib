@@ -139,7 +139,7 @@ public class Array2 {
 	}
 	
 	/**
-	 * Prints a 2DInt as is, with numbers.
+	 * Prints a 2DInt as is, with numbers. Y-up.
 	 * @param map	The 2DInt to print.
 	 */
 	public static void printInt2Raw(int[][] map) {

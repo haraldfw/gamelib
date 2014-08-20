@@ -4,7 +4,6 @@
 package com.smokebox.lib.pcg.dungeon;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -32,18 +31,9 @@ public class Node implements Comparable<Node>{
 	public void connectTo(Node n) {
 		connectedNodes.add(n);
 	}
-	
-	public static class OrderById implements Comparator<Node> {
-
-		@Override
-		public int compare(Node a, Node b) {
-			// TODO Auto-generated method stub
-			return a.id > b.id ? 1 : (a.id < b.id ? -1 : 0);
-		}
-	}
 
 	@Override
-	public int compareTo(Node arg0) {
-		return 0;
+	public int compareTo(Node n2) {
+		return n2.id - this.id;
 	}
 }

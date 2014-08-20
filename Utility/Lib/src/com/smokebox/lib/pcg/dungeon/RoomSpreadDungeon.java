@@ -5,11 +5,9 @@ package com.smokebox.lib.pcg.dungeon;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import com.smokebox.lib.utils.Vector2;
 import com.smokebox.lib.utils.Intersect;
 import com.smokebox.lib.utils.geom.Line;
 import com.smokebox.lib.utils.geom.Rectangle;
@@ -20,7 +18,7 @@ import com.smokebox.lib.utils.geom.Rectangle;
  */
 public class RoomSpreadDungeon {
 
-	public static RoomsWithTree RoomSpreadFloor(int cells, Random rand) {
+	public static RoomsWithTree RoomSpreadFloor(int cells, int roomDimScalar, float maxRoomRatio, Random rand) {
 		
 		// Time-keeping (debugging)
 		float timeStarted = System.nanoTime();
@@ -32,94 +30,33 @@ public class RoomSpreadDungeon {
 		Random random = (rand == null) ? new Random() : rand;
 
 		// A scalar for room-dimensions
-		int roomDimScalar = 5;
+		//int roomDimScalar = 5;
 		// The distribution of the rooms on spawn.
 		// A smaller distribution generally gives a poorer performance -
 		// due to the separation-process taking more time
-		int distribution = (int)(((float)cells*(float)roomDimScalar)/100) + 1;
-		// Maximum attempts to separate rooms
-		int maxIterations = cells;
+		int distribution = (int)((cells*roomDimScalar)/30) + 1;
 		// The accepted ratio for the rooms' dimensions. 
 		// A higher number gives longer rooms
-		float maxRoomRatio = 2f;
+		//float maxRoomRatio = 2f;
 		
-		ArrayList<Cell> rooms = new ArrayList<>();
+		// Get random rooms
+		System.out.println("Generating rooms");
+		System.out.println("\tCells: " + cells);
+		System.out.println("\tDistribution: " + distribution);
+		System.out.println("\tRatio: " + 1/maxRoomRatio + "-" + maxRoomRatio);
 		
-		Rectangle rect = new Rectangle();
-		
-		System.out.println("Generating " + cells +  " rooms in a cluster.");
-		for(int i = 0; i < cells; i++) {
-			
-			boolean roomAccepted = false;
-			
-			while(!roomAccepted) {
-				rect = new Rectangle(
-						random.nextInt(distribution) - distribution/2, 
-						random.nextInt(distribution) - distribution/2, 
-						(float)Math.round(Math.abs(random.nextGaussian()*roomDimScalar)),
-						(float)Math.round(Math.abs(random.nextGaussian()*roomDimScalar))
-				);
-				
-				float ratio = rect.height/rect.width;
-				if(ratio < maxRoomRatio && ratio > 1/maxRoomRatio
-						&& Intersect.onRng(rect.width, 3, 50) && Intersect.onRng(rect.height, 3, 50))
-					roomAccepted = true;
-			}
-			
-			rooms.add(new Cell(rect));
-		}
-		
+		ArrayList<Cell> rooms = getListRandomCells(cells, random, roomDimScalar, distribution, maxRoomRatio);
 		
 		System.out.println("Generating rooms finished. Time used so far: " 
 				+ ((System.nanoTime() - timeStarted)/Math.pow(10, 9)) + " seconds");
+		
 		System.out.println("Seperating the rooms...");
-		boolean collisionFound = true;
-		int iterations = 0;
-		int collisionChecks = 0;
-		int collisionResolutions = 0;
 		
 		// Separate rooms
-		while(collisionFound && iterations < maxIterations) {
-
-			collisionFound = false;
-			
-			for(int i = 0; i < rooms.size(); i++) {
-				Cell cell = rooms.get(i); // Define a cell to compare with the rest of the array
-
-				for(int j = i + 1; j < rooms.size(); j++) {
-					Cell cell2 = rooms.get(j); // Define a cell to compare to the previously chosen one
-
-					collisionChecks++;
-					
-					if(Intersect.rectRect(cell.rect, cell2.rect)) { // If the two cells intersect
-						collisionResolutions++;
-						
-						collisionFound = true; // Set collisionFound to true to ensure the loop restarts
-						
-						Vector2 newForce = new Vector2(); // New force-vector
-						
-						newForce.x = cell.rect.middlePos().x - cell2.rect.middlePos().x ;
-						newForce.y = cell.rect.middlePos().y - cell2.rect.middlePos().y;
-						
-						cell.addForce(newForce); // Add force-vector to cell#1
-						cell2.addForce(newForce.flip()); // Add flipped force-vector to cell#2
-					}
-				}
-			}
-			iterations++;
-			for(Cell c : rooms) {
-				c.forceAccumulation.nor();
-				c.applyForces();
-				c.clearForceAccumulation();
-			}
-			for(Cell c : rooms) c.rect.round();
-			System.out.println("Seperating, iterations: " + iterations + "/" + maxIterations);
-		}
-		timeOnRoomsAndSeperation = System.nanoTime() - timeStarted;
-		System.out.println("Total iterations: " + iterations);
-		System.out.println("CollisionChecks:\t" + collisionChecks);
-		System.out.println("CollisionResolutions:\t" + collisionResolutions);
+		Intersect.separateCells(rooms, random, 0.01f);
 		
+		for(Cell c : rooms) c.rect.round();
+				timeOnRoomsAndSeperation = System.nanoTime() - timeStarted;
 		System.out.println("Finished seperating rooms. Time used so far: " 
 				+ ((System.nanoTime() - timeStarted)/Math.pow(10, 9)) + " seconds");
 		System.out.println("Creating the tree...");
@@ -128,20 +65,16 @@ public class RoomSpreadDungeon {
 		int[] bounds = findBounds(rooms);
 		
 		// Shift rooms so lowest possible coordinates start at (0,0)
-		// So if lower/left bounds are negative, rooms are shifted up/right
+		// Rooms are shifted up/right
 		for(int i = 0; i < rooms.size(); i++) {
 			Cell c = rooms.get(i);
-			c.rect.pos.x -= (float)bounds[0];
-			c.rect.pos.y -= (float)bounds[1];
+			c.rect.x -= (float)bounds[0];
+			c.rect.y -= (float)bounds[1];
 		}
 		
 		// Sort rooms by area, bigger first
-		Collections.sort(rooms, new Comparator<Cell>(){
-			@Override
-			public int compare(Cell c, Cell c2) {
-				return (int) (c2.rect.area() - c.rect.area());
-			}
-		});
+		Collections.sort(rooms, (c1, c2) -> { return (int) (c2.rect.area() - c1.rect.area()); });
+		
 		ArrayList<Cell> biggerRooms = new ArrayList<>();
 		
 		for(int i = 0; i < rooms.size()/10; i++) {
@@ -149,7 +82,7 @@ public class RoomSpreadDungeon {
 		}
 		
 		// Tree
-		Tree tree = new Tree(biggerRooms);
+		MinimumSpanningTree tree = new MinimumSpanningTree(biggerRooms);
 		timeOnTree = System.nanoTime() - timeStarted - timeOnRoomsAndSeperation;
 		
 		// Edges
@@ -161,21 +94,22 @@ public class RoomSpreadDungeon {
 		for(Line e : edges) {
 			Rectangle horCorr = new Rectangle();
 			
-			horCorr.pos.x = (e.x < e.x2 ? e.x : e.x2) - 1;
+			horCorr.x = (e.x <= e.x2 ? e.x : e.x2) - 1;
 			horCorr.width = Math.abs(e.x2 - e.x) + 2;
 			
 			horCorr.height = corridorWidth;
-			horCorr.pos.y = (e.y2 - (corridorWidth - 1)/2);
+			horCorr.y = (e.y2 - (corridorWidth - 1)/2);
+			
+			corridors.add(horCorr);
 			
 			Rectangle verCorr = new Rectangle();
 			
-			verCorr.pos.y = (e.y < e.y2 ? e.y : e.y2) - 1;
-			verCorr.height = Math.abs(e.y2 - e.y);
+			verCorr.y = (e.y <= e.y2 ? e.y : e.y2) - 1;
+			verCorr.height = Math.abs(e.y2 - e.y) + 2;
 			
 			verCorr.width = corridorWidth;
-			verCorr.pos.x = (e.x - (corridorWidth - 1)/2);
+			verCorr.x = (e.x - (corridorWidth - 1)/2);
 			
-			corridors.add(horCorr);
 			corridors.add(verCorr);
 		}
 		
@@ -197,7 +131,7 @@ public class RoomSpreadDungeon {
 		ArrayList<Cell> finalRooms = new ArrayList<>();
 		for(Rectangle corr : corridors) {
 			for(Cell r : rooms) {
-				if(Intersect.rectRect(corr, r.rect)) {
+				if(Intersect.intersection(corr, r.rect)) {
 					finalRooms.add(r);
 				}
 			}
@@ -218,12 +152,41 @@ public class RoomSpreadDungeon {
 		return new RoomsWithTree(tree, finalRooms, rooms, corridors);
 	}
 	
+	public static ArrayList<Cell> getListRandomCells(int cells, 
+			Random random, 
+			float roomDimScalar,
+			int distribution,
+			float maxSideRatio)
+	{
+		Rectangle rect = new Rectangle();
+		ArrayList<Cell> rooms = new ArrayList<>();
+		for(int i = 0; i < cells; i++) {
+			boolean roomAccepted = false;
+			
+			while(!roomAccepted) {
+				rect = new Rectangle(
+						random.nextInt(distribution) - distribution/2, 
+						random.nextInt(distribution) - distribution/2, 
+						(float)Math.round(Math.abs(random.nextGaussian()*roomDimScalar)),
+						(float)Math.round(Math.abs(random.nextGaussian()*roomDimScalar))
+				);
+				
+				float ratio = rect.height/rect.width;
+				if(ratio < maxSideRatio && ratio > 1/maxSideRatio
+						&& Intersect.onRng(rect.width, 3, 50) && Intersect.onRng(rect.height, 3, 50))
+					roomAccepted = true;
+			}
+			
+			rooms.add(new Cell(rect));
+		}
+		return rooms;
+	}
+	
 	private static int[][] burnRoom(int[][] map, Rectangle r) {
-		
-		float xStart = r.pos.x;
-		float xEnd = r.pos.x + r.width;
-		float yStart = r.pos.y;
-		float yEnd = r.pos.y + r.height;
+		float xStart = r.x;
+		float xEnd = r.x + r.width;
+		float yStart = r.y;
+		float yEnd = r.y + r.height;
 		
 		for(int i = (int) xStart; i < xEnd; i++) {
 			for(int j = (int) yStart; j < yEnd; j++) {
@@ -240,22 +203,22 @@ public class RoomSpreadDungeon {
 		for(int i = 0; i < rooms.size(); i++) {
 			Rectangle rect = rooms.get(i).rect;
 			
-			float xLeft = rect.pos.x; // left bound 
+			float xLeft = rect.x; // left bound 
 			if(xLeft < bounds[0]) {
 				bounds[0] = (int)Math.floor(xLeft);
 			}
 			
-			float yBot = rect.pos.y; // bottom bound 
+			float yBot = rect.y; // bottom bound 
 			if(yBot < bounds[1]) {
 				bounds[1] = (int)Math.floor(yBot);
 			}
 
-			float xRight = rect.pos.x + rect.width; // right bound 
+			float xRight = rect.x + rect.width; // right bound 
 			if(xRight > bounds[2]) {
 				bounds[2] = (int)Math.ceil(xRight);
 			}
 			
-			float yTop = rect.pos.y + rect.height; // top bound 
+			float yTop = rect.y + rect.height; // top bound 
 			if(yTop > bounds[3]) {
 				bounds[3] = (int)Math.ceil(yTop);
 			}

@@ -2,7 +2,6 @@ package com.smokebox.lib.utils.pathfinding;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import com.smokebox.lib.utils.MathUtils;
 
@@ -59,10 +58,12 @@ public class StarNode {
 	}
 	
 	public void finalizeConnections() {
-		Collections.sort(connections, new Comparator<Connection>() {
-			public int compare(Connection c, Connection c2) {
-		        return (int) Math.round(c.weight - c2.weight); // use your logic
-		    }
-		});
+//		Collections.sort(connections, new Comparator<Connection>() {
+//			@Override
+//			public static int compare(Connection c, Connection c2) {
+//		        return (int) Math.round(c.weight - c2.weight); // use your logic
+//		    }
+//		});
+		Collections.sort(connections, (Connection c1, Connection c2) -> { return (int) (c1.weight - c2.weight); });
 	}
 }

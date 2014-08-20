@@ -5,13 +5,15 @@ import com.smokebox.lib.utils.Vector2;
 
 public class Rectangle {
 
-	public Vector2 pos;
+	public float x;
+	public float y;
 	public float width;
 	public float height;
 	public float boundingRadius;
 	
 	public Rectangle(float x, float y, float width, float height) {
-		this.pos = new Vector2(x, y);
+		this.x = x;
+		this.y = y;
 		this.width = width;
 		this.height = height;
 		
@@ -19,7 +21,8 @@ public class Rectangle {
 	}
 	
 	public Rectangle() {
-		this.pos = new Vector2();
+		this.x = 0;
+		this.y = 0;
 		this.width = 0;
 		this.height = 0;
 		
@@ -31,46 +34,60 @@ public class Rectangle {
 	}
 
 	public Vector2 botLeftPos() {
-		return pos;
+		return new Vector2(x, y);
 	}
 	
 	public Vector2 middlePos() {
-		return new Vector2(pos.x + width/2, pos.y + height/2);
+		return new Vector2(x + width/2, y + height/2);
 	}
 	
 	public void addToPosition(Vector2 v) {
-		pos.add(v);
+		x += v.x;
+		y += v.y;
+	}
+	
+	public void addToPosition(float x, float y) {
+		this.x += x;
+		this.y += y;
 	}
 	
 	public void print() {
 		System.out.println("-- Rectangle --");
-		System.out.println("Position:   " + pos.x + ", " + pos.y);
+		System.out.println("Position:   " + x + ", " + y);
 		System.out.println("Dimensions: " + width + ", " + height);
 	}
 	
 	public Rectangle getScaled(float f) {
-		return new Rectangle(pos.x*f, pos.y*f, width*f, height*f);
+		return new Rectangle(x*f, y*f, width*f, height*f);
 	}
 	
 	public Rectangle round() {
-		pos.x = Math.round(pos.x);
-		pos.y = Math.round(pos.y);
-		width = Math.round(width);
-		height = Math.round(height);
+		Math.round(x);
+		Math.round(y);
+		Math.round(width);
+		Math.round(height);
 		
 		return this;
 	}
 	
 	public Rectangle floor() {
-		pos.x = (float) Math.floor(pos.x);
-		pos.y = (float) Math.floor(pos.y);
-		width = (float) Math.floor(width);
-		width = (float) Math.floor(height);
+		Math.floor(x);
+		Math.floor(y);
+		Math.floor(width);
+		Math.floor(height);
 		
 		return this;
 	}
 	
-	public Rectangle getTransformedCopy(float x, float y, float width, float height) {
-		return new Rectangle(this.pos.x + x, this.pos.y + y, this.width + width, this.height + height);
+	public float x2() {
+		return x + width;
+	}
+	
+	public float y2() {
+		return y + height;
+	}
+	
+	public Vector2 getMidPos() {
+		return new Vector2(x + width/2, y + height/2);
 	}
 }

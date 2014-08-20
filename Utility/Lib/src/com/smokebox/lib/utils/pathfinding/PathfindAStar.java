@@ -24,7 +24,7 @@ public class PathfindAStar {
 	private ArrayList<StarNode> nodes;
 	
 	public PathfindAStar() {
-		nodes = new ArrayList<>();
+		nodes = new ArrayList<StarNode>();
 	}
 	
 	public void addNode(float x, float y) {
@@ -182,11 +182,11 @@ public class PathfindAStar {
 			toRemove.remove(s);
 		}
 		System.out.println("Done purging inner corner nodes. New size of nodeArray is: " + nodes.size());
-		System.out.println("Adding nodes in the larger rooms from given dungeon...");
+		System.out.println("Adding nodes in larger rooms, if a dungeon is given");
 		if(dungeon != null) {
 			for(Cell c : dungeon.rooms) {
 				Rectangle r = c.rect;
-				Vector2 v = new Vector2(r.pos.x + r.width/2, r.pos.y + r.height/2);
+				Vector2 v = new Vector2(r.x + r.width/2, r.y + r.height/2);
 				if(r.width*r.height > 1) if(getNodeAt(v.x, v.y, nodes) == null)nodes.add(new StarNode(v.x, v.y));
 			}
 		}
@@ -212,7 +212,7 @@ public class PathfindAStar {
 	}
 	
 	public void connectNodesBySight(ArrayList<Line> intersectors) {
-		System.out.println("Mapping lines of sight");
+		System.out.println("Mapping lines of sight on " + nodes.size() + " nodes");
 		float sightLines = 0;
 		for(StarNode n : nodes) {
 			for(StarNode s : nodes) {
@@ -221,7 +221,7 @@ public class PathfindAStar {
 				if(!Intersect.pointInsidePolyedge(l.x + (l.x2 - l.x)/2, l.y + (l.y2 - l.y)/2, intersectors, -10)) continue;
 				Boolean collision = false;
 				for(Line w : intersectors) {
-					if(Intersect.lineLine(l, w)) {
+					if(Intersect.intersection(l, w)) {
 						collision = true;
 						break;
 					}
@@ -232,7 +232,6 @@ public class PathfindAStar {
 			}
 		}
 		System.out.println("Done mapping lines of sight. Total sightlines: " + sightLines);
-		System.out.println("Simplifying sightline-graph...");
 		System.out.println("Fixing sightline intersections...");
 		for(StarNode s : nodes) { // for every node in nodeList
 			ArrayList<Connection> toRemove_s = new ArrayList<>();
@@ -243,7 +242,7 @@ public class PathfindAStar {
 					for(Connection c2 : s2.getConnections()) { // for every s2-node connection
 						Line c2l = c2.getAsLine(); // Connection#2 represented as a Line
 						if(cl.equalTo(c2l)) continue; // If parallel, no intersection; skip
-						if(Intersect.lineLine(cl, c2l)) { // If connections intersect
+						if(Intersect.intersection(cl, c2l)) { // If connections intersect
 							if(cl.getMag2() >= c2l.getMag2()) { // If c is shorter than c2, remove c
 								toRemove_s.add(c);
 							}
@@ -331,7 +330,7 @@ public class PathfindAStar {
 	 */
 	public static boolean lineLineList(Line l, ArrayList<Line> lines) {
 		for(Line l2 : lines) {
-			if(Intersect.lineLine(l, l2)) return true;
+			if(Intersect.intersection(l, l2)) return true;
 		}
 		return false;
 	}

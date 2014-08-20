@@ -47,22 +47,22 @@ public class Polygon {
 		return this;
 	}
 	
-	public float[] getVerticesAsFloatArray() {
+	public float[] getVerticesAsFloatArray(float xStart, float yStart) {
 		float[] ver = new float[vertices.length*2];
 		int j = 0;
 		for(int i = 0; i < vertices.length; i++) {
-			ver[j] = vertices[i].x;
+			ver[j] = vertices[i].x + xStart;
 			j++;
-			ver[j] = vertices[i].y;
+			ver[j] = vertices[i].y + yStart;
 			j++;
 		}
 		return ver;
 	}
 	
 	public Polygon setRotation(float angleInRadians) {
-		vertices[0].set(rotatePoint(vertices[0], origin, angleInRadians - this.angle));
-		vertices[1].set(rotatePoint(vertices[1], origin, angleInRadians - this.angle));
-		vertices[2].set(rotatePoint(vertices[2], origin, angleInRadians - this.angle));
+		for(int i = 0; i < vertices.length; i++) {
+			vertices[i].set(rotatePoint(vertices[i], origin, angleInRadians - this.angle));
+		}
 		this.angle = angleInRadians;
 		angleInRadians += angleOffset;
 		return this;

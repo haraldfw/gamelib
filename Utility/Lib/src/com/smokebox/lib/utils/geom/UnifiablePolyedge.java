@@ -52,16 +52,17 @@ public class UnifiablePolyedge {
 	}
 	
 	/**
-	 * Iterates through the edges of this polygon and removes all unnecessary edges
-	 * @return A polygon
+	 * Iterates through the edges of this polygon and removes all unnecessary edges,
+	 * merges successive lines and fixes retains "loops"
+	 * 
 	 */
 	public void unify() {
 // Remove duplicates -----------------------------------------------
 		makeDirectionsRightUp(edges);
 		
-		System.out.println("\n//// Starting unify-process ////");
-		System.out.println("Size of edge-list is: " + edges.size());
-		System.out.println("-------- Finding duplicate lines..");
+		System.out.println("Unifying polyedge");
+		System.out.println("Size of edge-list: " + edges.size());
+		System.out.println("Finding duplicate lines..");
 		ArrayList<Line> toRemove = new ArrayList<>();
 			
 		for(int i = 0; i < edges.size(); i++) {

@@ -87,6 +87,11 @@ public class Line {
 		this.y = y;
 	}
 	
+	public void setStart(Vector2 v) {
+		this.x = v.x;
+		this.y = v.y;
+	}
+	
 	public void setEnd(float x, float y) {
 		this.x2 = x;
 		this.y2 = y;
@@ -156,5 +161,37 @@ public class Line {
 	
 	public boolean equalTo(Line l2) {
 		return x == l2.x && x2 == l2.x2 && y == l2.y && y2 == l2.y2;
+	}
+	
+	public Vector2 getMinimumDistance(float cx, float cy) {
+		float px = x2 - x;
+	    float py = y2 - y;
+
+	    float s = px*px + py*py;
+
+	    float u =  ((cx - x) * px + (cy - y) * py)/s;
+
+	    if(u > 1) u = 1;
+	    else if(u < 0) u = 0;
+
+	    float nx = x + u * px;
+	    float ny = y + u * py;
+
+	    float dx = nx - cx;
+	    float dy = ny - cy;
+	    
+	    return new Vector2(dx, dy);
+	}
+	
+	public Vector2 getMinimumDistance(Vector2 c) {
+		return getMinimumDistance(c.x, c.y);
+	}
+	
+	/**
+	 * Returns the line as if it was a vector from x1,y1 to x2,y2
+	 * @return Vector2 representation
+	 */
+	public Vector2 getAsVector2() {
+		return new Vector2(x2 - x, y2 - y);
 	}
 }

@@ -30,6 +30,24 @@ public class Vector2 {
 	}
 	
 	/**
+	 * Constructs a normal vector from given angle
+	 * @param angle	
+	 */
+	public Vector2(float angle) {
+		x = (float)Math.sin(angle);
+		y = (float)Math.cos(angle);
+	}
+	
+	/**
+	 * Constructs a normal vector from given angle
+	 * @param angle	
+	 */
+	public Vector2(double angle) {
+		x = (float)Math.sin(angle);
+		y = (float)Math.cos(angle);
+	}
+	
+	/**
 	 * Creates a vector from the two given components 
 	 * @param x	The x-component
 	 * @param y The y-component
@@ -71,19 +89,10 @@ public class Vector2 {
 	/**
 	 * Returns the squared magnitude of the vector.
 	 * Use this to spare resources if comparing the length of two vectors.
-	 * @return	float for magnitude^2
+	 * @return	float for magnitude squared
 	 */
 	public float getMag2() {
-		return (float) (x*x + y*y);
-	}
-	
-	/**
-	 * Returns the scalar product of this vector and the given
-	 * @param v
-	 * @return
-	 */
-	public float getScalarProduct(Vector2 v) {
-		return x*v.x + y*v.y;
+		return x*x + y*y;
 	}
 	
 	/**
@@ -97,14 +106,6 @@ public class Vector2 {
 			y /= mag;
 		}
 		return this;
-	}
-	
-	/**
-	 * Returns a normalized copy of this vector
-	 * @return A normalized copy of this vector for chaining
-	 */
-	public Vector2 getNor() {
-		return new Vector2(this).nor();
 	}
 	
 	/**
@@ -165,7 +166,18 @@ public class Vector2 {
 	}
 	
 	/**
-	 * Flips both the x- and y-components of this vector
+	 * Scales this vector by given scalar
+	 * @param scalar	Double to scale by
+	 * @return	This vector for chaining
+	 */
+	public Vector2 scl(double scalar) {
+		x *= scalar;
+		y *= scalar;
+		return this;
+	}
+	
+	/**
+	 * Flips both components of this vector
 	 * @return	This vector for chaining
 	 */
 	public Vector2 flip() {
@@ -231,13 +243,39 @@ public class Vector2 {
 		return this;
 	}
 	
+	public static Vector2 getRandom() {
+		return new Vector2((float)Math.random()*2 - 1, (float)Math.random()*2 - 1);
+	}
+	
+	public static Vector2 getRandomDirection() {
+		return new Vector2(Math.random()*Math.PI*2);
+	}
+	
 	/**
-	 * Sets the components to random values. X and y can be both positive and negative
-	 * @return This vector for chaining
+	 * Sets this vector to random normalized
+	 * @return	This vector for chaining
 	 */
-	public Vector2 setRandom() {
-		this.x = (float)Math.random()*2 - 1;
-		this.y = (float)Math.random()*2 - 1;
+	public Vector2 setRandomNormalized() {
+		x = (float)Math.random()*2 - 1;
+		y = (float)Math.random()*2 - 1;
+		
+		return this.nor();
+	}
+	
+	/**
+	 * Sets vector to random values. If xlow or yhigh i higher than
+	 * counterpart, vector will remain as before.
+	 * @param xll	X lower limit
+	 * @param xtl	X top limit
+	 * @param yll	Y lower limit
+	 * @param ytl	Y top limit
+	 * @return This vector for chaining, after values have been set.
+	 */
+	public Vector2 setRandom(float xll, float xtl, float yll, float ytl) {
+		if(xtl < xll || ytl < yll) return this;
+		
+		x = (float) (Math.random()*(xtl - xll) + xll);
+		y = (float) (Math.random()*(ytl - yll) + yll);
 		
 		return this;
 	}
@@ -247,9 +285,9 @@ public class Vector2 {
 	 * @return The angle of this vector in radians
 	 */
 	public float getAngleAsRadians() {
-		if(y == 0) return (float) (x >= 0 ? 0 : Math.PI);
-		if(x == 0) return (float) (y >= 0 ? Math.PI/2: (0.75f)*Math.PI);
-		return (float)Math.atan2(y, x);
+		float f = (float)Math.atan2(y, x);
+		if(f < 0) f += 2f*Math.PI;
+		return f;
 	}
 	
 	/**
@@ -258,7 +296,7 @@ public class Vector2 {
 	 * @return	The angle between this vector and the one given
 	 */
 	public float getAngleTo(Vector2 v) {
-		return (float) (Math.atan2(x*v.y - y*v.x, x*v.x + y*v.y));
+		return v.getAngleAsRadians() - this.getAngleAsRadians();
 	}
 	
 	/**
@@ -329,7 +367,7 @@ public class Vector2 {
 	 * @param power	The power to raise by
 	 * @return	This vector for chaining
 	 */
-	public Vector2 raiseToPower(float power) {
+	public Vector2 pow(float power) {
 		x = (float)Math.pow(x, power);
 		y = (float)Math.pow(y, power);
 		return this;
@@ -361,7 +399,103 @@ public class Vector2 {
 	 * @return	This vector for chaining
 	 */
 	public Vector2 truncate(float max) {
-		if(getMag() > max) nor().scl(max);
+		if(getMag2() > max*max) this.nor().scl(max);
 		return this;
+	}
+	
+	/**
+	 * Applies linear interpolation to the vector
+	 * @param end	The Vector to interpolate towards
+	 * @param fraction	The step in which to do it by. (0-1). Higher numbers result in faster interpolation
+	 * @return	This vector for chaining
+	 */
+	public Vector2 lerp(Vector2 end, float fraction) {
+		x = MathUtils.lerp(this.x, end.x, fraction);
+		y = MathUtils.lerp(this.y, end.y, fraction);
+		return this;
+	}
+	
+	/**
+	 * A normalized lerp, much more accurate compared to how effective it is.
+	 * @param end	Vector2 to interpolate towards
+	 * @param fraction	The step in which to do it by. (0-1). Higher numbers result in faster interpolation
+	 * @return	This vector for chaining
+	 */
+	public Vector2 nlerp(Vector2 end, float fraction) {
+		return lerp(end, fraction).nor();
+	}
+	
+	/** Does not work. FIXME
+	 * Applies circular interpolation to the vector. Less accurate
+	 * but more effective than lerp.
+	 * @param end	Vector to interpolate towards
+	 * @param fraction	The step in which to do it by. (0-1). Higher numbers result in faster interpolation
+	 * @return	This vector for chaining
+	 */
+	@Deprecated
+	public Vector2 clerp(Vector2 end, float fraction) {
+		float dot = this.getDotProduct(end);
+		MathUtils.clamp(dot, -1f, 1f);
+		float theta = (float)Math.acos(dot)*fraction;
+		Vector2 relVec = new Vector2(end).sub(new Vector2(this).scl(dot)).nor();
+		return new Vector2(this).scl( (float)Math.cos(theta) ).add( relVec.scl( (float)Math.sin(theta) ) );
+	}
+	
+	public static Vector2 projectAOntoB(Vector2 a, Vector2 b) {
+		Vector2 p = new Vector2(a).scl(a.getDotProduct(b)/a.getMag2());
+		return p;
+	}
+
+	/**
+	 * Returns the given vector projected onto this one 
+	 * @param b	The vector to project from
+	 * @return	This vector for chaining
+	 */
+	public Vector2 limitByProjection(Vector2 b) {
+		this.scl(this.getDotProduct(b)/this.getMag2());
+		
+		return this;
+	}
+	
+	public Vector2 projectOnto(Vector2 a) {
+		this.set(new Vector2(a).scl(a.getDotProduct(this)/a.getMag2()));
+		
+		return this;
+	}
+	
+	/**
+	 * Return vector with components inverted (1/x, 1/y)
+	 * @return This vector for chaining
+	 */
+	public Vector2 invert() {
+		x = 1/x;
+		y = 1/y;
+		return this;
+	}
+	
+	/**
+	 * Returns a normal vector for this vector
+	 * @return	Not normalized normal vector
+	 */
+	public Vector2 getNormal() {
+		return new Vector2(-y, x);
+	}
+	
+	/**
+	 * Returns a normal vector for this vector
+	 * This is flipped compared to getNormal()
+	 * @return	Not normalized normal vector
+	 */
+	public Vector2 getNormal2() {
+		return new Vector2(y, -x);
+	}
+	
+	/**
+	 * Use to hinder unwanted changes when passing as
+	 * 	parameter and using in calculations and the likes.
+	 * @return	A copy of this vector
+	 */
+	public Vector2 cp() {
+		return new Vector2(x, y);
 	}
 }

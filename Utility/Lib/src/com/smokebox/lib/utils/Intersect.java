@@ -1,11 +1,14 @@
 package com.smokebox.lib.utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
+import com.smokebox.lib.pcg.dungeon.Cell;
 import com.smokebox.lib.utils.geom.Circle;
 import com.smokebox.lib.utils.geom.Line;
 import com.smokebox.lib.utils.geom.Ray;
 import com.smokebox.lib.utils.geom.Rectangle;
+import com.smokebox.lib.utils.geom.HalfSpace;
 
 public class Intersect {
 	/**
@@ -21,38 +24,74 @@ public class Intersect {
 	 * @param b	Rectangle #2
 	 * @return	Boolean for the intersection
 	 */
-	public static boolean rectRect(Rectangle a, Rectangle b) {
-		return (a.pos.x < b.pos.x + b.width) && (a.pos.x + a.width > b.pos.x) && (a.pos.y < b.pos.y + b.height) && (a.pos.y + a.height > b.pos.y);
+	public static boolean intersection(Rectangle a, Rectangle b) {
+		return (a.x < b.x + b.width) && (a.x + a.width > b.x) && (a.y < b.y + b.height) && (a.y + a.height > b.y);
+	}
+	
+	public static Vector2 linePointClosestDistance(float lx, float ly, float lx2, float ly2, float px, float py) {
+		float dx = lx2 - lx;
+	    float dy = ly2 - ly;
+
+	    float s = dx*dx + dy*dy;
+
+	    float u =  ((px - lx) * dx + (py - ly) * dy)/s;
+
+	    if(u > 1) u = 1;
+	    else if(u < 0) u = 0;
+
+	    float nx = lx + u * dx;
+	    float ny = ly + u * dy;
+	    
+	    return new Vector2(nx - px, ny - py);
+	}
+	
+	public static boolean rectCircle(Circle circle, Rectangle rect) {
+		float distx = Math.abs(circle.x - rect.x);
+		float disty = Math.abs(circle.y - rect.y);
+		
+		if (distx > (rect.width/2 + circle.radius)) { return false; }
+		if (disty > (rect.height/2 + circle.radius)) { return false; }
+		
+		if (distx <= (rect.width/2)) { return true; } 
+		if (disty <= (rect.height/2)) { return true; }
+		
+		float fx = distx - rect.width/2;
+		fx *= fx;
+		float fy = disty - rect.height/2;
+		fy *= fy;
+		
+		float cornerDistance_sq = fx + fy;
+		
+		return cornerDistance_sq <= (circle.radius*circle.radius);
 	}
 	
 	/**
 	 * Return true if given line intersects with given rectangle.
 	 * @param l	Line
 	 * @param r	Rectangle
-	 * @return	Boolean for the intersection.
+	 * @return	True if intersection.
 	 */
-	public static boolean lineRect(Line l, Rectangle r) {
+	public static boolean intersection(Line l, Rectangle r) {
 		
-		if(	(l.x < r.pos.x && l.x2 < r.pos.x) || (l.x > r.pos.x + r.width && l.x2 > r.pos.x + r.width) ||
-			(l.y < r.pos.y && l.y2 < r.pos.y) || (l.y > r.pos.y + r.height && l.y2 > r.pos.y + r.height)) {
+		if(	(l.x < r.x && l.x2 < r.x) || (l.x > r.x + r.width && l.x2 > r.x + r.width) ||
+			(l.y < r.y && l.y2 < r.y) || (l.y > r.y + r.height && l.y2 > r.y + r.height)) {
 			return false;
 		}
 		
-		return rayRect(l.asRay(), r);
+		return intersection(l.asRay(), r);
 	}
 	
 	/**
 	 * Return true if given ray intersects with given rectangle.
 	 * @param ray	Ray
-	 * @param r		Rectangle
-	 * @return		Boolean for intersection.r
+	 * @param r	Rectangle
+	 * @return	Boolean for intersection.r
 	 */
-	public static boolean rayRect(Ray ray, Rectangle r) {
-		
-		boolean rTopLeftIsBelow = (r.pos.y + r.height < ray.y + ray.slope*(r.pos.x - ray.x));
-		boolean rBotLeftBelow = (r.pos.y < ray.y + ray.slope*(r.pos.x - ray.x));
-		boolean rTopRightBelow = (r.pos.y + r.height < ray.y + ray.slope*(r.pos.x + r.width - ray.x));
-		boolean rBotRightBelow = (r.pos.y < ray.y + ray.slope*(r.pos.x + r.width - ray.x));
+	public static boolean intersection(Ray ray, Rectangle r) {
+		boolean rTopLeftIsBelow = (r.y + r.height < ray.y + ray.slope*(r.x - ray.x));
+		boolean rBotLeftBelow = (r.y < ray.y + ray.slope*(r.x - ray.x));
+		boolean rTopRightBelow = (r.y + r.height < ray.y + ray.slope*(r.x + r.width - ray.x));
+		boolean rBotRightBelow = (r.y < ray.y + ray.slope*(r.x + r.width - ray.x));
 		
 		return !(	rTopLeftIsBelow == rTopRightBelow
 				&& 	rTopLeftIsBelow == rBotLeftBelow
@@ -63,10 +102,14 @@ public class Intersect {
 	 * Return true if two given circles are intersecting.
 	 * @param c1	Circle #1
 	 * @param c2	Circle #2
-	 * @return		Boolean for intersection
+	 * @return	True if intersection
 	 */
-	public static boolean circleCircle(Circle c1, Circle c2) {
+	public static boolean intersection(Circle c1, Circle c2) {
 		return (c1.radius + c2.radius)*(c1.radius + c2.radius) > (c1.x - c2.x)*(c1.x - c2.x) + (c1.y - c2.y)*(c1.y - c2.y);
+	}
+	
+	public static boolean circleCircle(float x1, float y1, float r1, float x2, float y2, float r2) {
+		return (r2 + r2)*(r1 + r2) > (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
 	}
 	
 	/**
@@ -85,7 +128,7 @@ public class Intersect {
 	
 	public static boolean rayLine(Ray r, Line l) {
 		Line l2 = new Line(r.x, r.y, r.x + 1 + l.x2 - l.x, r.y + (l.x2 - l.x)*r.slope);
-		return lineLine(l, l2);
+		return intersection(l, l2);
 	}
 	
 	private static boolean ccw(Vector2 a, Vector2 b, Vector2 c) {
@@ -101,7 +144,7 @@ public class Intersect {
 		return hor.y >= ver.y && hor.y <= ver.y2 && hor.x <= ver.x && hor.x2 >= ver.x;
 	}
 	
-	public static boolean lineLine(Line l, Line l2) {
+	public static boolean intersection(Line l, Line l2) {
 		l.correctDirection();
 		l2.correctDirection();
 		// If lines have end-points together
@@ -152,6 +195,9 @@ public class Intersect {
 				(l.x == l.x2 && x == l.x && inRng(y, l.y, l.y2));
 	}
 	
+	/**
+	 * Only works for axis-aligned walls
+	 */
 	public static boolean pointInsidePolyedge(float x, float y, ArrayList<Line> edges, float mostLeftX) {
 		int inters = 0;
 		
@@ -159,7 +205,23 @@ public class Intersect {
 		
 		for(Line l : edges) {
 			if(Intersect.pointAxisAlignedLine(x, y, l)) return false;
-			if(l.isPerfectVertical() && Intersect.lineLine(line, l)) inters++;
+			if(l.isPerfectVertical() && Intersect.intersection(line, l)) inters++;
+		}
+		
+		return inters%2 != 0;
+	}
+	
+	/**
+	 * Only works for axis-aligned lines
+	 */
+	public static boolean pointInsideWallList(float x, float y, ArrayList<HalfSpace> walls, float mostLeftX) {
+		int inters = 0;
+		
+		Line line = new Line(x, y, mostLeftX - 10, y);
+		
+		for(HalfSpace w : walls) {
+			if(Intersect.pointAxisAlignedLine(x, y, w.line)) return false;
+			if(w.line.isPerfectVertical() && Intersect.intersection(line, w.line)) inters++;
 		}
 		
 		return inters%2 != 0;
@@ -176,5 +238,125 @@ public class Intersect {
 	
 	private static boolean inRng(float f, float min, float max) {
 		return f > min && f < max;
+	}
+	
+	/**
+	 * Warning: Heavy, should not be run often!
+	 * @param cells	
+	 */
+	public static void separateCells(ArrayList<Cell> cells, Random r, float f) {
+		while(runOneSeparationIteration(cells, r, f));
+	}
+	
+	/**
+	 * Runs one separation-iteration on the given cells. Returns false if no
+	 * intersections more extensive than accuracy where found
+	 * @param cells	The cells to separate
+	 * @param r	Random-object to use to distribute rooms
+	 * @param acc	How accurate should the tester be? 
+	 * @return False if no intersection found was larger than given accuracy
+	 */
+	public static boolean runOneSeparationIteration(ArrayList<Cell> cells, Random r, float acc) {
+		boolean collisionFound = false;
+		
+		for(int i = 0; i < cells.size() - 1; i++) {
+			// Get cell to compare to rest of list
+			Cell c1 = cells.get(i);
+			
+			// Iterate through every object beneath i-one, in the list
+			for(int j = i + 1; j < cells.size(); j++) {
+				// Get cell 2 to compare to cell 1
+				Cell c2 = cells.get(j);
+				
+				// Find out if the two cells intersect
+				float penX = horisontalPenetration(c1.rect, c2.rect);
+				float penY = verticalPenetration(c1.rect, c2.rect);
+				
+				if(Math.abs(penX) > 0 && Math.abs(penY) > 0) {
+					// Find shortest penetration-axis. Set other one to 0
+					if(Math.abs(penX) <= Math.abs(penY)) penY = 0;
+					else penX = 0;
+					
+					if(penX + penY > acc) collisionFound = true;
+					
+					float halfPenX = penX/2;
+					float halfPenY = penY/2;
+					c1.rect.addToPosition(halfPenX, halfPenY);
+					c2.rect.addToPosition(-halfPenX, -halfPenY);
+				}
+			}
+		}
+		
+		return collisionFound;
+	}
+	
+	public static Vector2 penetration(Rectangle r1, Rectangle r2) {
+		Vector2 pen = new Vector2(horisontalPenetration(r1, r2), verticalPenetration(r1, r2));
+		if(Math.abs(pen.x) <= Math.abs(pen.y)) pen.y = 0;
+		else pen.x = 0;
+		return pen;
+	}
+	
+	public static float horisontalPenetration(Rectangle r1, Rectangle r2) {
+		float halfW1 = r1.width/2;
+		float halfW2 = r2.width/2;
+
+		float center1 = r1.x + halfW1;
+		float center2 = r2.x + halfW2;
+
+		float distanceX = center1 - center2;
+		float minDistanceX = halfW1 + halfW2;
+
+		// No intersection
+		if (Math.abs(distanceX) >= minDistanceX)
+			return 0f;
+
+		return distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+	}
+	
+	public static float verticalPenetration(Rectangle r1, Rectangle r2) {
+		float halfH1 = r1.height/2;
+		float halfH2 = r2.height/2;
+
+		float center1 = r1.y + halfH1;
+		float center2 = r2.y + halfH2;
+
+		float distanceY = center1 - center2;
+		float minDistanceY = halfH1 + halfH2;
+
+		// No intersection
+		if (Math.abs(distanceY) >= minDistanceY)
+			return 0f;
+
+		return distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+	}
+	
+	public static Vector2 distance(Line l, float pntx, float pnty) {
+		float px = l.x2 - l.x;
+	    float py = l.y2 - l.y;
+
+	    float s = px*px + py*py;
+
+	    float u = ((pntx - l.x)*px + (pnty - l.y)*py)/s;
+
+	    if(u > 1) u = 1;
+	    else if(u < 0) u = 0;
+
+	    float nx = l.x + u*px;
+	    float ny = l.y + u*py;
+
+	    float dx = nx - pntx;
+	    float dy = ny - pnty;
+	    
+	    return new Vector2(dx, dy);
+	}
+	
+	public static Vector2 distance(Line l, Vector2 p) {
+		return distance(l, p.x, p.y);
+	}
+	
+	public static Vector2 penetration(Vector2 p1, float r1, Vector2 p2, float r2) {
+		Vector2 dist = new Vector2(p2).sub(p1);
+		return dist.nor().scl(dist.getMag() - r1 - r2);
 	}
 }

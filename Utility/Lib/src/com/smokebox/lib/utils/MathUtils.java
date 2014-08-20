@@ -98,4 +98,19 @@ public class MathUtils {
 	    
 		return true;
 	}
+	
+	/**
+	 * Linear interpolation between the two given numbers.
+	 * @param a	Start
+	 * @param b	End
+	 * @param f	Fraction, should be between 0 and 1
+	 * @return	The lerped float
+	 */
+	public static float lerp(float a, float b, float f) {
+	    return a + f*(b - a);
+	}
+	
+	public static float clamp(float val, float min, float max) {
+	    return Math.max(min, Math.min(max, val));
+	}
 }
