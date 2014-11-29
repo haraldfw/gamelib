@@ -3,11 +3,11 @@
  */
 package com.smokebox.lib.utils.geom;
 
+import com.smokebox.lib.utils.Vector2;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-import com.smokebox.lib.utils.Vector2;
 
 /**
  * @author Harald Floor Wilhelmsen
@@ -27,10 +27,40 @@ public class UnifiablePolyedge {
 		edges = new ArrayList<>();
 		System.out.println("Empty polyedge created");
 	}
+
+	/**
+	 * Creates a new unifiable polyedge from the given map. This constructor also unifies
+	 * @param map	The int[][] to create map from
+	 */
+	public UnifiablePolyedge(int[][] map) {
+		ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
+		for (int i = 0; i < map.length; i++) {
+			for (int j = 0; j < map[0].length; j++) {
+				if (map[i][j] > 0) rects.add(new Rectangle(i, j, 1, 1));
+			}
+		}
+
+		ArrayList<Line> lines = new ArrayList<Line>();
+		for (Rectangle r : rects) {
+			lines.add(new Line(
+									  r.x, r.y,
+									  r.x, r.y + r.height));
+			lines.add(new Line(
+									  r.x + r.width, r.y,
+									  r.x + r.width, r.y + r.height));
+			lines.add(new Line(
+									  r.x, r.y,
+									  r.x + r.width, r.y));
+			lines.add(new Line(
+									  r.x, r.y + r.height,
+									  r.x + r.width, r.y + r.height));
+		}
+
+		this.edges = lines;
+	}
 	
 	/**
 	 * Creates a polyedge from the given Line-list
-	 * If you want to create an empty polyedge please use UnifiablePolyedge()
 	 * @param edges
 	 */
 	public UnifiablePolyedge(ArrayList<Line> edges) {
@@ -56,7 +86,7 @@ public class UnifiablePolyedge {
 	 * merges successive lines and fixes retains "loops"
 	 * 
 	 */
-	public void unify() {
+	public UnifiablePolyedge unify() {
 // Remove duplicates -----------------------------------------------
 		makeDirectionsRightUp(edges);
 		
@@ -170,6 +200,7 @@ public class UnifiablePolyedge {
 		}
 		System.out.println("Vertical lines merged.");
 		System.out.println("Done. New size of edge-list is: " + edges.size());
+		return this;
 	}
 	
 	public void fixIntersectingWalls() {
@@ -250,5 +281,14 @@ public class UnifiablePolyedge {
 	
 	public Vector2 getOrigin() {
 		return origin;
+	}
+
+	public void scale(float scale) {
+		for(Line l : edges) {
+			l.x *= scale;
+			l.y *= scale;
+			l.x2 *= scale;
+			l.y2 *= scale;
+		}
 	}
 }

@@ -4,7 +4,6 @@
 package com.smokebox.lib.utils.geom;
 
 import com.smokebox.lib.utils.Vector2;
-import com.smokebox.lib.utils.geom.Line;
 
 /**
  * @author Harald Floor Wilhelmsen

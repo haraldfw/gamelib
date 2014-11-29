@@ -3,14 +3,14 @@
  */
 package com.smokebox.lib.pcg.dungeon;
 
+import com.smokebox.lib.utils.Intersect;
+import com.smokebox.lib.utils.geom.Line;
+import com.smokebox.lib.utils.geom.Rectangle;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
-import com.smokebox.lib.utils.Intersect;
-import com.smokebox.lib.utils.geom.Line;
-import com.smokebox.lib.utils.geom.Rectangle;
 
 /**
  * @author Harald Floor Wilhelmsen
@@ -152,7 +152,8 @@ public class RoomSpreadDungeon {
 		return new RoomsWithTree(tree, finalRooms, rooms, corridors);
 	}
 	
-	public static ArrayList<Cell> getListRandomCells(int cells, 
+	public static ArrayList<Cell> getListRandomCells(
+			int cells,
 			Random random, 
 			float roomDimScalar,
 			int distribution,

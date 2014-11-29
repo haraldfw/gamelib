@@ -3,9 +3,9 @@
  */
 package com.smokebox.lib.pcg.dungeon;
 
-import java.util.ArrayList;
-
 import com.smokebox.lib.utils.geom.Rectangle;
+
+import java.util.ArrayList;
 
 /**
  * @author Harald Floor Wilhelmsen

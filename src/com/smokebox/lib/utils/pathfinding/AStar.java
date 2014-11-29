@@ -3,11 +3,6 @@
  */
 package com.smokebox.lib.utils.pathfinding;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
-import com.smokebox.lib.pcg.dungeon.Cell;
-import com.smokebox.lib.pcg.dungeon.RoomsWithTree;
 import com.smokebox.lib.utils.Intersect;
 import com.smokebox.lib.utils.MathUtils;
 import com.smokebox.lib.utils.Vector2;
@@ -15,15 +10,18 @@ import com.smokebox.lib.utils.geom.Line;
 import com.smokebox.lib.utils.geom.Rectangle;
 import com.smokebox.lib.utils.geom.UnifiablePolyedge;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 /**
  * @author Harald Floor Wilhelmsen
  *
  */
-public class PathfindAStar {
+public class AStar {
 	
 	private ArrayList<StarNode> nodes;
 	
-	public PathfindAStar() {
+	public AStar() {
 		nodes = new ArrayList<StarNode>();
 	}
 	
@@ -38,7 +36,15 @@ public class PathfindAStar {
 	public ArrayList<StarNode> getNodes() {
 		return nodes;
 	}
-	
+
+	/**
+	 *
+	 * @param start	Coordinates of starting position
+	 * @param goal	Coordinates of goal
+	 * @param heuristic	The method of estimating the best next node.
+	                    Manhattan for performance. Pythagorean for accuracy.
+	 * @return
+	 */
 	public ArrayList<StarNode> findPath(StarNode start, StarNode goal, Heuristic heuristic) {
 		PathfindingList open = new PathfindingList();
 		PathfindingList closed = new PathfindingList();
@@ -57,8 +63,10 @@ public class PathfindAStar {
 			
 			for(Connection c : current.getConnections()) {
 				StarNode endNode = c.end;
+
 				float endNodeCost = current.costSoFar + c.weight;
 				float endNodeHeuristic;
+
 				// Check if node is in closed list
 				if(closed.contains(endNode)) {
 					// If we have not found a quicker path
@@ -99,7 +107,6 @@ public class PathfindAStar {
 	/**
 	 * A class to store nodes
 	 * @author Harald Floor Wilhelmsen
-	 *
 	 */
 	private class PathfindingList {
 		
@@ -138,28 +145,52 @@ public class PathfindAStar {
 	// TODO refine algorithm from World.java into these methods
 	// 	to convert different types of world-representations to
 	//	a pathfinding-friendly format
-	public void defineWorldFromInt2(int[][] map) {
-		
+	public void defineWorldFromInt2(int[][] asInt) {
+		ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
+		for(int i = 0; i < asInt.length; i++) {
+			for(int j = 0; j < asInt[0].length; j++) {
+				if(asInt[i][j] > 0) rects.add(new Rectangle(i, j, 1, 1));
+			}
+		}
+
+		ArrayList<Line> lines = new ArrayList<Line>();
+		for(Rectangle r : rects) {
+			lines.add(new Line(
+									  r.x, 			r.y,
+									  r.x, 			r.y + r.height));
+			lines.add(new Line(
+									  r.x + r.width, 	r.y,
+									  r.x + r.width, 	r.y + r.height));
+			lines.add(new Line(
+									  r.x, 			r.y,
+									  r.x + r.width, 	r.y));
+			lines.add(new Line(
+									  r.x, 			r.y + r.height,
+									  r.x + r.width,	r.y + r.height));
+		}
+
+		UnifiablePolyedge p = new UnifiablePolyedge(lines);
+		defineWorldFromPolyedge(p);
 	}
 	
 	/**
 	 * Defines the world from the given polyedge and RoomsWithTree
-	 * @param polyedge	The polyedge to define map from, required
-	 * @param dungeon	RoomsWithTree used as additional node-placement information. Can be null
+	 * @param polyedge    The polyedge to define map from, required
+	 *
 	 */
-	public void defineWorldFromPolyedge(UnifiablePolyedge polyedge, RoomsWithTree dungeon) {
-		polyedge.unify();
+	public void defineWorldFromPolyedge(UnifiablePolyedge polyedge) {
 		polyedge.fixIntersectingWalls();
 		System.out.println("Adding nodes...");
 		for(Line l : polyedge.getEdges()) {
-			if(getNodeAt(l.x, l.y, nodes) == null && !(numberOfLinesOnThisPoint(l.x, l.y, polyedge.getEdges()) > 2)) nodes.add(new StarNode(l.x, l.y));
-			if(getNodeAt(l.x2, l.y2, nodes) == null && !(numberOfLinesOnThisPoint(l.x2, l.y2, polyedge.getEdges()) > 2)) nodes.add(new StarNode(l.x2, l.y2));
+			if(getNodeAt(l.x, l.y, nodes) == null && !(nrLinesnPoint(l.x, l.y, polyedge.getEdges()) > 2)) nodes.add(new StarNode(l.x, l.y));
+			if(getNodeAt(l.x2, l.y2, nodes) == null && !(nrLinesnPoint(l.x2, l.y2, polyedge.getEdges()) > 2)) nodes.add(new StarNode(l.x2, l.y2));
 		}
 		// Remove nodes in inner corners
 		System.out.println(nodes.size() + " nodes added.");
 		System.out.println("Detecting nodes in inner corners...");
-		ArrayList<StarNode> toRemove = new ArrayList<>();
+		ArrayList<StarNode> toRemove = new ArrayList<StarNode>();
 		for(StarNode n : nodes) {
+			// TODO Refactor this method with a for(int i = 0; i < size;) if(nodeIsToBeRemoved){removeNode and i++}
 			// Lines on this point
 			ArrayList<Line> linesOnNode = getLinesFromThisPoint(n.x, n.y, polyedge.getEdges());
 			if(linesOnNode.size() != 2) { // If node does not have exactly 2 lines, remove it
@@ -182,28 +213,20 @@ public class PathfindAStar {
 			toRemove.remove(s);
 		}
 		System.out.println("Done purging inner corner nodes. New size of nodeArray is: " + nodes.size());
-		System.out.println("Adding nodes in larger rooms, if a dungeon is given");
-		if(dungeon != null) {
-			for(Cell c : dungeon.rooms) {
-				Rectangle r = c.rect;
-				Vector2 v = new Vector2(r.x + r.width/2, r.y + r.height/2);
-				if(r.width*r.height > 1) if(getNodeAt(v.x, v.y, nodes) == null)nodes.add(new StarNode(v.x, v.y));
-			}
-		}
 		System.out.println("Final size of node-Array is: " + nodes.size());
 		connectNodesBySight(polyedge.getEdges());
 		connectNodesAlongWalls(polyedge.getEdges());
 	}
 	
 	private ArrayList<Line> getLinesFromThisPoint(float x, float y, ArrayList<Line> lines) {
-		ArrayList<Line> onThisPoint = new ArrayList<>();
+		ArrayList<Line> onThisPoint = new ArrayList<Line>();
 		for(Line l : lines) {
 			if((l.x == x && l.y == y) || (l.x2 == x && l.y2 == y)) onThisPoint.add(l);
 		}
 		return onThisPoint;
 	}
 	
-	private int numberOfLinesOnThisPoint(float x, float y, ArrayList<Line> lines) {
+	private int nrLinesnPoint(float x, float y, ArrayList<Line> lines) {
 		int linesHere = 0;
 		for(Line l : lines) {
 			if((l.x == x && l.y == y) || (l.x2 == x && l.y2 == y)) linesHere++;
@@ -336,12 +359,12 @@ public class PathfindAStar {
 	}
 	
 	
-	public StarNode getNodeClosestTo(Vector2 loc) {
+	public StarNode getNodeClosestTo(float x, float y) {
 		StarNode closestNode = nodes.get(0);
-		float closestDist = MathUtils.vectorLengthSquared(closestNode.x - loc.x, closestNode.y - loc.y);
+		float closestDist = MathUtils.vectorLengthSquared(closestNode.x - x, closestNode.y - y);
 		for(int j = 0; j < nodes.size(); j++) {
 			StarNode i = nodes.get(j);
-			float newDist = MathUtils.vectorLengthSquared(i.x - loc.x, i.y - loc.y); 
+			float newDist = MathUtils.vectorLengthSquared(i.x - x, i.y - y);
 			if(newDist < closestDist) {
 				closestNode = i;
 				closestDist = newDist;

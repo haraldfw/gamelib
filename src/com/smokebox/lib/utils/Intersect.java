@@ -1,14 +1,11 @@
 package com.smokebox.lib.utils;
 
+import com.smokebox.lib.pcg.dungeon.Cell;
+import com.smokebox.lib.utils.geom.*;
+import com.smokebox.lib.utils.geom.Rectangle;
+
 import java.util.ArrayList;
 import java.util.Random;
-
-import com.smokebox.lib.pcg.dungeon.Cell;
-import com.smokebox.lib.utils.geom.Circle;
-import com.smokebox.lib.utils.geom.Line;
-import com.smokebox.lib.utils.geom.Ray;
-import com.smokebox.lib.utils.geom.Rectangle;
-import com.smokebox.lib.utils.geom.HalfSpace;
 
 public class Intersect {
 	/**
@@ -27,6 +24,10 @@ public class Intersect {
 	public static boolean intersection(Rectangle a, Rectangle b) {
 		return (a.x < b.x + b.width) && (a.x + a.width > b.x) && (a.y < b.y + b.height) && (a.y + a.height > b.y);
 	}
+    
+    public static boolean intersectionRectRect(float x, float y, float width, float height, float x2, float y2, float width2, float height2) {
+        return (x < x2 + width2) && (x + width > x2) && (y < y2 + height2) && (y + height > y2);
+    }
 	
 	public static Vector2 linePointClosestDistance(float lx, float ly, float lx2, float ly2, float px, float py) {
 		float dx = lx2 - lx;
@@ -145,8 +146,8 @@ public class Intersect {
 	}
 	
 	public static boolean intersection(Line l, Line l2) {
-		l.correctDirection();
-		l2.correctDirection();
+		l.ensureCorrectDirection();
+		l2.ensureCorrectDirection();
 		// If lines have end-points together
 		
 		if(l.isPerfectHorizontal() && l2.isPerfectHorizontal() && l.y == l2.y) 
@@ -176,7 +177,7 @@ public class Intersect {
 	 * @return	boolean for intersection
 	 */
 	public static boolean pointLine(Vector2 p, Line l) {
-		l.correctDirection();
+		l.ensureCorrectDirection();
 		return p.y == l.y + p.x*l.getSlope() && onRng(p.x, l.x, l.x2);
 		
 	}
@@ -296,6 +297,8 @@ public class Intersect {
 		else pen.x = 0;
 		return pen;
 	}
+
+
 	
 	public static float horisontalPenetration(Rectangle r1, Rectangle r2) {
 		float halfW1 = r1.width/2;
@@ -330,6 +333,40 @@ public class Intersect {
 
 		return distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
 	}
+
+    public static float horisontalPenetrationRectRect(float x, float x2, float width, float width2) {
+        float halfW1 = width/2;
+        float halfW2 = width2/2;
+
+        float center1 = x + halfW1;
+        float center2 = x2 + halfW2;
+
+        float distanceX = center1 - center2;
+        float minDistanceX = halfW1 + halfW2;
+
+        // No intersection
+        if (Math.abs(distanceX) >= minDistanceX)
+            return 0f;
+
+        return distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+    }
+
+    public static float verticalPenetrationRectRect( float y, float y2, float height, float height2) {
+        float halfH1 = height/2;
+        float halfH2 = height2/2;
+
+        float center1 = y + halfH1;
+        float center2 = y2 + halfH2;
+
+        float distanceY = center1 - center2;
+        float minDistanceY = halfH1 + halfH2;
+
+        // No intersection
+        if (Math.abs(distanceY) >= minDistanceY)
+            return 0f;
+
+        return distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+    }
 	
 	public static Vector2 distance(Line l, float pntx, float pnty) {
 		float px = l.x2 - l.x;

@@ -313,8 +313,8 @@ public class Vector2 {
 	 * @return	This vector for chaining
 	 */
 	public Vector2 clear() {
-		x = 0;
-		y = 0;
+		this.x = 0;
+		this.y = 0;
 		return this;
 	}
 	

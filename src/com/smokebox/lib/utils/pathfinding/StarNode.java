@@ -1,9 +1,10 @@
 package com.smokebox.lib.utils.pathfinding;
 
+import com.smokebox.lib.utils.MathUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
-
-import com.smokebox.lib.utils.MathUtils;
+import com.smokebox.lib.utils.pathfinding.Connection;
 
 /**
  * @author Harald Floor Wilhelmsen
@@ -11,9 +12,9 @@ import com.smokebox.lib.utils.MathUtils;
  */
 public class StarNode {
 
-	public float x;
-	public float y;
-	
+	public final float x;
+	public final float y;
+
 	public float costSoFar = -1;
 	public float estimatedTotalCost = -1;
 	

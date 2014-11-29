@@ -26,16 +26,21 @@ public class Line {
 		this.x2 = x2;
 		this.y2 = y2;
 	}
-	
-	public Line(Vector2 start, Vector2 end) {
-		this.x = start.x;
-		this.y = start.y;
-		this.x2 = end.x;
-		this.y2 = end.y;
+
+	/**
+	 * Creates a line between the vectors given
+	 * @param from	Starting vector
+	 * @param to	Ending vector
+	 */
+	public Line(Vector2 from, Vector2 to) {
+		this.x = from.x;
+		this.y = from.y;
+		this.x2 = to.x;
+		this.y2 = to.y;
 	}
 	
 	/**
-	 * Constructs a line with all coordinates in 0,0
+	 * Constructs a line with all coordinates equal to zero
 	 */
 	public Line() {
 		this.x = 0;
@@ -47,8 +52,8 @@ public class Line {
 	/**
 	 * Prints the lines variables in a read-friendly format
 	 */
-	public void Print() {
-		System.out.print("Line from:\t" + x + "," + y + "\tto:\t" + x + "," + y + "\n");
+	public String toString() {
+		return "Line from:\t" + x + "\t" + y + "\tto:\t" + x + "\t" + y;
 	}
 	
 	/**
@@ -70,11 +75,12 @@ public class Line {
 	 * @param x2	End-x to set to
 	 * @param y2	End-y to set to
 	 */
-	public void setPosition(float x, float y, float x2, float y2) {
+	public Line set(float x, float y, float x2, float y2) {
 		this.x = x;
 		this.y = y;
 		this.x2 = x2;
 		this.y2 = y2;
+		return this;
 	}
 	
 	/**
@@ -82,41 +88,44 @@ public class Line {
 	 * @param x	The start-x to set to
 	 * @param y	The start-y to set to
 	 */
-	public void setStart(float x, float y) {
+	public Line setStart(float x, float y) {
 		this.x = x;
 		this.y = y;
+		return this;
 	}
 	
-	public void setStart(Vector2 v) {
+	public Line setStart(Vector2 v) {
 		this.x = v.x;
 		this.y = v.y;
+		return this;
 	}
 	
-	public void setEnd(float x, float y) {
+	public Line setEnd(float x, float y) {
 		this.x2 = x;
 		this.y2 = y;
+		return this;
 	}
 	
 	public float angle() {
-		return (float)Math.atan2(y2 - y, x2 - x) + 3.1415f;
+		float f = (float)Math.atan2(y2 - y, x2 - x);
+		if(f < 0) f += 2f*Math.PI;
+		return f;
 	}
 	
 	public float getMag2() {
 		return new Vector2(x2 - x, y2 - y).getMag2();
 	}
-	
-	public Line correctDirection() {
-		if(x2 < x) { // If line climbs to the left, flip components
+
+	/**
+	 * Ensures and corrects if needed the direction of the line.
+	 * Ensures the line climbs to the right(x < x2.
+	 */
+	public Line ensureCorrectDirection() {
+		if(x > x2) {
 			float t = x;
 			x = x2;
 			x2 = t;
 			t = y;
-			y = y2;
-			y2 = t;
-		}
-		
-		if(isPerfectVertical() && y > y2) {
-			float t = y;
 			y = y2;
 			y2 = t;
 		}

@@ -90,4 +90,42 @@ public class Rectangle {
 	public Vector2 getMidPos() {
 		return new Vector2(x + width/2, y + height/2);
 	}
+
+	public Rectangle set(float x, float y, float width, float height) {
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		return this;
+	}
+
+	public Rectangle setDimensions(float width, float height) {
+		this.width = width;
+		this.height = height;
+		return this;
+	}
+
+	public Rectangle setPos(Vector2 pos) {
+		this.x = pos.x;
+		this.y = pos.y;
+		return this;
+	}
+
+	public Rectangle setPos(float x, float y) {
+		this.x = x;
+		this.y = y;
+		return this;
+	}
+
+	public Rectangle ensureAxisAlignment() {
+		if(width < 0) {
+			x += width;
+			width = -width;
+		}
+		if(height < 0) {
+			y += height;
+			height = -height;
+		}
+		return this;
+	}
 }

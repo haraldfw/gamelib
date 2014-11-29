@@ -1,8 +1,8 @@
 package com.smokebox.lib.pcg.dungeon;
 
-import java.util.Random;
-
 import com.smokebox.lib.utils.IntVector2;
+
+import java.util.Random;
 
 public class Dungeon {
 	

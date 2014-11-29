@@ -12,13 +12,15 @@ import com.smokebox.lib.utils.Vector2;
  */
 public class Euclidian implements Heuristic {
 	
-	private Vector2 goal;
+	private float goalX;
+	private float goalY;
 
-	public Euclidian(Vector2 goal) {
-		this.goal = goal;
+	public Euclidian(float goalX, float goalY) {
+		this.goalX = goalX;
+		this.goalY = goalY;
 	}
 	
 	public float estimate(StarNode from) {
-		return MathUtils.vectorLength(goal.x - from.x, goal.y - from.y);
+		return MathUtils.vectorLength(goalX - from.x, goalY - from.y);
 	}
 }

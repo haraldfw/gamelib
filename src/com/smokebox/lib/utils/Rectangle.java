@@ -1,8 +1,5 @@
 package com.smokebox.lib.utils;
 
-import com.smokebox.lib.utils.Vector2;
-
-
 public class Rectangle {
 
 	public float x;

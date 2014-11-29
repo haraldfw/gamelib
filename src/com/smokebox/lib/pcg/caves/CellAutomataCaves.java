@@ -1,8 +1,8 @@
 package com.smokebox.lib.pcg.caves;
 
-import java.util.Random;
-
 import com.smokebox.lib.utils.Array2;
+
+import java.util.Random;
 
 public class CellAutomataCaves {
 
