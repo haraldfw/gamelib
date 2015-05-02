@@ -17,7 +17,7 @@ import java.util.Random;
  */
 public class RoomSpreadDungeon {
 
-  public static RoomsWithTree RoomSpreadFloor(int cells, int roomDimScalar, float maxRoomRatio,
+  public static RoomsWithTree roomSpreadFloor(int cells, int roomDimScalar, float maxRoomRatio,
                                               Random rand) {
 
     // Time-keeping (debugging)

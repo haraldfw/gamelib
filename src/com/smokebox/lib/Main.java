@@ -16,7 +16,7 @@ public class Main {
 		Array2.saveMapAsImage(f.map);
 		
 		r.createDungeon(50, 50, 20, (long)(Math.random()*100));
-		RoomSpreadDungeon.RoomSpreadFloor(150, rand);
+		RoomSpreadDungeon.roomSpreadFloor(150, rand);
 		*/
     WeaponGenerator w = new WeaponGenerator();
     int grade = 10;
