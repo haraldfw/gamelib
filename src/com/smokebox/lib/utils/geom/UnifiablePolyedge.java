@@ -23,11 +23,11 @@ public class UnifiablePolyedge {
    */
   public UnifiablePolyedge() {
     edges = new ArrayList<>();
-    System.out.println("Empty polyedge created");
   }
 
   /**
-   * Creates a new unifiable polyedge from the given map. This constructor also unifies
+   * Creates a new unifiable polyedge from the given map.
+   * This method only takes into account 2 tile-types; 0 and 1
    *
    * @param map The int[][] to create map from
    */
@@ -65,7 +65,6 @@ public class UnifiablePolyedge {
    */
   public UnifiablePolyedge(ArrayList<Line> edges) {
     this.edges = edges;
-    System.out.println("Creating polyedge from given edge-list");
   }
 
   public void addEdge(Line l) {
