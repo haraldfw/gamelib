@@ -258,8 +258,12 @@ public class AStar {
 		System.out.println("Fixing sightline intersections...");
 		for(StarNode s : nodes) { // for every node in nodeList
 			ArrayList<Connection> toRemove_s = new ArrayList<>();
-			for(Connection c : s.getConnections()) { // For every s-node connection
-				Line cl = c.getAsLine(); // Connection represented as a Line
+
+			// For every s-node connection
+			for(Connection c : s.getConnections()) {
+				// Connection represented as a Line
+				Line cl = c.getAsLine();
+
 				for(StarNode s2 : nodes) { // For every node in nodeList. StarNode s2
 					if(s == s2) continue;
 					for(Connection c2 : s2.getConnections()) { // for every s2-node connection

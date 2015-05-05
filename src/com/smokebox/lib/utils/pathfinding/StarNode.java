@@ -19,7 +19,7 @@ public class StarNode {
 	public float estimatedTotalCost = -1;
 	
 	private StarNode parent;
-	
+
 	private ArrayList<Connection> connections;
 	
 	public StarNode(float x, float y) {
@@ -33,8 +33,8 @@ public class StarNode {
 	}
 	
 	/**
-	 * Add a connection from this node to the one given
-	 * Weight will be the geographical distance between nodes
+	 * Add a connection from this node to the one given.
+	 * Weight will be the distance(pythagorean) between the nodes.
 	 * @param end	The node to add connection to
 	 */
 	public void addConnection(StarNode end) {
@@ -49,22 +49,32 @@ public class StarNode {
 		return parent;
 	}
 
+	/**
+	 *
+	 * @param parent
+	 */
 	public void setParent(StarNode parent) {
 		this.parent = parent;
 	}
 
+	/**
+	 * Resets costSoFar and estimatedTotalCost to -1
+	 */
 	public void clearHeuristics() {
 		costSoFar = -1;
 		estimatedTotalCost = -1;
 	}
-	
+
+	/**
+	 * Sorts connection-list by weight
+	 */
 	public void finalizeConnections() {
 //		Collections.sort(connections, new Comparator<Connection>() {
 //			@Override
 //			public static int compare(Connection c, Connection c2) {
-//		        return (int) Math.round(c.weight - c2.weight); // use your logic
+//		        return (int) Math.round(c.weight - c2.weight);
 //		    }
 //		});
-		Collections.sort(connections, (Connection c1, Connection c2) -> { return (int) (c1.weight - c2.weight); });
+		Collections.sort(connections, (Connection c1, Connection c2) -> { return (int) Math.round((c1.weight - c2.weight)*100); });
 	}
 }

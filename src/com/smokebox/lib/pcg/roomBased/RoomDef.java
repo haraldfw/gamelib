@@ -20,7 +20,7 @@ public final class RoomDef {
 	public final int height;
 	private int maxConnections = 2;
 
-	private ArrayList<DoorDef> unclaimedDoors;
+	public ArrayList<DoorDef> unclaimedDoors;
 
 	public RoomDef(int x, int y, int width, int height) {
 		this.x = x;
@@ -38,11 +38,11 @@ public final class RoomDef {
 
 			// top wall
 			doorY = y + height;
-			doorDefs.put(String.valueOf(doorX) + String.valueOf(doorY), new DoorDef(this, doorX, doorY));
+			putDoor(doorX, doorY);
 
 			// bottom wall
 			doorY = y - 1;
-			doorDefs.put(String.valueOf(doorX) + String.valueOf(doorY), new DoorDef(this, doorX, doorY));
+			putDoor(doorX, doorY);
 		}
 		for(int dy = 0; dy < height; dy++) {
 			// calculate y-coordinate
@@ -50,11 +50,11 @@ public final class RoomDef {
 
 			// left wall
 			doorX = x - 1;
-			doorDefs.put(String.valueOf(doorX) + String.valueOf(doorY), new DoorDef(this, doorX, doorY));
+			putDoor(doorX, doorY);
 
 			// right wall
 			doorX = x + width;
-			doorDefs.put(String.valueOf(doorX) + String.valueOf(doorY), new DoorDef(this, doorX, doorY));
+			putDoor(doorX, doorY);
 		}
 
 		// add all doors to unclaimedDoors list
@@ -88,18 +88,27 @@ public final class RoomDef {
 		maxConnections += amount;
 		// if room cannot physically have more connections, all walls are taken return false
 		// else return true
-		if(maxConnections > width*2 + height*2) {
-			maxConnections = width*2 + height*2;
+		int w = width*2 + height*2;
+		if(maxConnections > w) {
+			maxConnections = w;
 			return false;
-		} else
-			return true;
-	}
-
-	public int amountOfUnclaimedDoors() {
-		return unclaimedDoors.size();
+		}
+		return true;
 	}
 
 	public boolean canHaveMoreConnections() {
+		return claimedDoors() < maxConnections;
+	}
+
+	private int claimedDoors() {
+		return width*2 + height*2 - unclaimedDoors.size();
+	}
+
+	public int openWalls() {
+		return unclaimedDoors.size();
+	}
+
+	public boolean hasOpenWalls() {
 		return !unclaimedDoors.isEmpty();
 	}
 
@@ -108,6 +117,10 @@ public final class RoomDef {
 	}
 
 	public DoorDef getDoorTo(int x, int y) {
-		return doorDefs.get(String.valueOf(x) + String.valueOf(y));
+		return doorDefs.get(x + "," + y);
+	}
+
+	private void putDoor(int x, int y) {
+		doorDefs.put(x + "," + x, new DoorDef(this, x, x));
 	}
 }

@@ -1,8 +1,8 @@
 package com.smokebox.lib.pcg.roomBased;
 
-import com.smokebox.lib.utils.IntVector2;
-
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -30,50 +30,48 @@ public final class Isaac {
 	 * Generates a 2D array of Rooms
 	 * @param amountOfRooms	How many rooms to place, *not* including all special rooms.
 	 * @param chanceForLargeRooms	Between 0 and 1. 0 will ensure all rooms stay 1by1. 1 will make all rooms bigger
+	 * @param amountOfEnds	How many ends the map will have *Not yet implemented
 	 * @param maxWidth	The max width of rooms
 	 * @param maxHeight	The max height of rooms
+	 * @param pathsAreSingular	If true, the loop will not place rooms that connect to more than one other at a time.
 	 * @return	The generated map in a 2D Room-array.
 	 */
 	public static RoomDef[] generate(int amountOfRooms, float chanceForLargeRooms, int amountOfEnds,
-											  int maxWidth, int maxHeight, Random rng) {
+										int maxWidth, int maxHeight, Random rng, boolean pathsAreSingular) {
 		// list for storing the rooms, this list is returned as an array at end of algo
 		ArrayList<RoomDef> rooms = new ArrayList<RoomDef>();
 
 		// place spawnRoom
-		RoomDef spawn = new RoomDef(0, 0, 1, 1);
-		spawn.increaseMaxConnections(2);
-		rooms.add(spawn);
+		rooms.add(new RoomDef(0, 0, 1, 1));
+
+		HashMap<String, Boolean> occupiedCoordinates = new HashMap<>();
 
 		while(rooms.size() <= amountOfRooms) {
 
 			// get random room from list that has open and available connections
-			RoomDef toBuildFrom;
+			// shuffle list of rooms
+			Collections.shuffle(rooms, rng);
 
-			int attempts = 0;
-			while(true) {
-				toBuildFrom = rooms.get(rng.nextInt(rooms.size()));
+			// get first room in list which has open wall
 
-				if(toBuildFrom.canHaveMoreConnections())
+			RoomDef toBuildFrom = null;
+			for(RoomDef def : rooms) {
+				// check if this def has an unclaimed door
+				if(def.canHaveMoreConnections()) {
+					toBuildFrom = def;
 					break;
+				}
+			}
 
-				// if loop has had too many attempts
-				if(attempts > amountOfRooms) {
-
-					// find random room with an unclaimed door
-					RoomDef hasOpenWall;
-
-					while(true) {
-						// choose a random room
-						hasOpenWall = rooms.get(rng.nextInt(rooms.size()));
-						if(hasOpenWall.canHaveMoreConnections()) {
-							hasOpenWall.increaseMaxConnections(1);
-							toBuildFrom = hasOpenWall;
-							break;
-						}
+			// if no room has free connections
+			if(toBuildFrom == null) {
+				Collections.shuffle(rooms, rng);
+				// find first room which has an open wall
+				for(RoomDef def : rooms) {
+					if(def.hasOpenWalls() && def.increaseMaxConnections(1)) {
+						break;
 					}
 				}
-
-				attempts++;
 			}
 
 			// get random door from selected room
@@ -96,15 +94,41 @@ public final class Isaac {
 			if(x < toBuildFrom.x) x -= width + 1;
 			if(y < toBuildFrom.y) y -= height + 1;
 
-			// TODO check if there actually can be a room at the given location
-
-			// place a room with found variables and add it to the list
+			// place a room with found variables
 			RoomDef placed = new RoomDef(x, y, width, height);
+
+			// check if there actually can be a room at the given location
+			if(pathsAreSingular) {
+				// check leadsTo-coordinates for every door in placed room and cancel if any of them are occupied
+				for(DoorDef door : placed.unclaimedDoors) {
+					if(occupiedCoordinates.get(door.leadsToX + "," + door.leadsToY)) continue;
+				}
+			} else {
+				for(int plx = placed.x; plx < placed.x + placed.width; plx++) {
+					for(int ply = placed.y; ply < placed.y + placed.height; ply++) {
+						// check if placed overlaps any other rooms
+						if(occupiedCoordinates.get(plx + "," + ply)) continue;
+					}
+				}
+			}
+
+			// If iteration reaches this point, the room is valid
+			// add placed room to rooms-list
 			rooms.add(placed);
+
+			// add the occupied coordinates to coordinates-map
+			for(int plx = placed.x; plx < placed.x + placed.width; plx++) {
+				for(int ply = placed.y; ply < placed.y + placed.height; ply++) {
+					// check if placed overlaps any other rooms
+					occupiedCoordinates.put(plx + "," + ply, true);
+				}
+			}
 
 			// connect doors
 			toBuildFrom.connectDoors(expanding, placed.getDoorTo(expanding.leadsToX, expanding.leadsToY));
 		}
+
+
 
 		return (RoomDef[]) rooms.toArray();
 	}
