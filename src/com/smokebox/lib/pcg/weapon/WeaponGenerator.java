@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.smokebox.lib.pcg.weapon;
 
@@ -8,10 +8,9 @@ import java.util.Random;
 
 /**
  * @author Harald Floor Wilhelmsen
- *
  */
 public class WeaponGenerator {
-	
+
 	/*
 	 * Every gun has three modifiers as to what kind of weapon it is.
 	 * Prefix, suffix and type. The type is the main modifier to tell what kind of weapon it is.
@@ -55,30 +54,32 @@ public class WeaponGenerator {
 	 * easier to produce), so that almost gun is unique. You can get a gun with a rusty
 	 * stock and a barrel that is on fire that shoots fire-bullets.
 	 */
-	
-	/*
-	 * This class has methods to generate guns, and will return instances of the classes
-	 * Melee or Ranged (maybe).
-	 */
-	Random rand;
-	
-	public WeaponGenerator() {
-		rand = new Random();
-	}
-	
-	public File generateMeleeImage() {
-		File path = new File("");
-		
-		// Generate image from the stats given as parameters
-		
-		return path;
-	}
-	
-	public String generateGunName(float grade) {
-		return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged.getSuffix(rand, grade);
-	}
-	
-	public String generateMeleeName(float grade) {
-		return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged.getSuffix(rand, grade);
-	}
+
+  /*
+   * This class has methods to generate guns, and will return instances of the classes
+   * Melee or Ranged (maybe).
+   */
+  Random rand;
+
+  public WeaponGenerator() {
+    rand = new Random();
+  }
+
+  public File generateMeleeImage() {
+    File path = new File("");
+
+    // Generate image from the stats given as parameters
+
+    return path;
+  }
+
+  public String generateGunName(float grade) {
+    return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
+        .getSuffix(rand, grade);
+  }
+
+  public String generateMeleeName(float grade) {
+    return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
+        .getSuffix(rand, grade);
+  }
 }
