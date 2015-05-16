@@ -36,4 +36,12 @@ public class IntVector2 {
   public boolean isLike(int x, int y) {
     return this.x == x && this.y == y;
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof IntVector2)) return false;
+
+    IntVector2 v = (IntVector2) obj;
+    return x == v.x && y == v.y;
+  }
 }

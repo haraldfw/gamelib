@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.smokebox.lib.utils.pathfinding;
 
 import com.smokebox.lib.utils.Intersect;
