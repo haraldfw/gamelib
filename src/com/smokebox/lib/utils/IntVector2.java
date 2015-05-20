@@ -37,6 +37,10 @@ public class IntVector2 {
     return this.x == x && this.y == y;
   }
 
+  public boolean isZero() {
+    return x == 0 && y == 0;
+  }
+
   @Override
   public boolean equals(Object obj) {
     if(!(obj instanceof IntVector2)) return false;
