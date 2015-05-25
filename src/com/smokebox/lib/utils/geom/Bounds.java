@@ -5,10 +5,10 @@ package com.smokebox.lib.utils.geom;
  */
 public class Bounds {
 
-  int x;
-  int y;
-  int width;
-  int height;
+  public int x;
+  public int y;
+  public int width;
+  public int height;
 
   public Bounds(int x, int y, int width, int height) {
     this.x = x;
@@ -31,4 +31,3 @@ public class Bounds {
     return false;
   }
 }
-
