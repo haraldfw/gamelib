@@ -56,19 +56,6 @@ public class Vector2 {
     this.y = y;
   }
 
-  public static Vector2 getRandom() {
-    return new Vector2((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1);
-  }
-
-  public static Vector2 getRandomDirection() {
-    return new Vector2(Math.random() * Math.PI * 2);
-  }
-
-  public static Vector2 projectAOntoB(Vector2 a, Vector2 b) {
-    Vector2 p = new Vector2(a).scl(a.getDotProduct(b) / a.getMag2());
-    return p;
-  }
-
   /**
    * Sets this vector equal to the one given
    *
@@ -543,5 +530,18 @@ public class Vector2 {
    */
   public Vector2 cp() {
     return new Vector2(x, y);
+  }
+
+  public static Vector2 getRandom() {
+    return new Vector2((float) Math.random() * 2 - 1, (float) Math.random() * 2 - 1);
+  }
+
+  public static Vector2 getRandomDirection() {
+    return new Vector2(Math.random() * Math.PI * 2);
+  }
+
+  public static Vector2 projectAOntoB(Vector2 a, Vector2 b) {
+    Vector2 p = new Vector2(a).scl(a.getDotProduct(b) / a.getMag2());
+    return p;
   }
 }

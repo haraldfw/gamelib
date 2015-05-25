@@ -1,8 +1,6 @@
 package com.smokebox.lib.pcg.roomBased;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -14,17 +12,23 @@ public final class Isaac {
           1. add new room at 0,0 with size 1,1. This is the spawn-room
           2. for(int i = 1; i < amountOfRooms; i++)
                   1.2 choose random room from the list
-                  1.3 if (room's connections < longestWall + 1 or (room is fork) and (room has at least 1 free side) continue, else jump back to step 1.2
-                                  TODO find solution for looping map where all rooms have max connections
+                  1.3 if (room's connections < longestWall + 1 or (room is fork) and (room has at
+                   least 1 free side) continue, else jump back to step 1.2
+                                  TODO find solution for looping map where all rooms have max
+                                  connections
                                   Declare a random room as a fork, and then loop again(?)
                   1.4 place a room randomly on one of the free sides of the room
           3. iterate over room[] and make an ArrayList with all end-rooms
-          4. if endList's size is smaller than the amount of special-rooms, clear room[] and return to step 1
+          4. if endList's size is smaller than the amount of special-rooms, clear room[] and
+          return to step 1
           5. Place special-rooms
-                  5.1 Place bossRoom on the endRoom with the longest path to the spawn-room and remove this room from the endList
-                  5.2 Place the shop and treasure-room and remove in similar style on random endList entries
+                  5.1 Place bossRoom on the endRoom with the longest path to the spawn-room and
+                  remove this room from the endList
+                  5.2 Place the shop and treasure-room and remove in similar style on random
+                  endList entries
                   /place secret-room/
   */
+
   /**
    * Generates a 2D array of Rooms
    *

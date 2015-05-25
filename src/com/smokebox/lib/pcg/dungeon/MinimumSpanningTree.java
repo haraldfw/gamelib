@@ -26,7 +26,7 @@ public class MinimumSpanningTree {
 
     //Array2.printFloat2(relationChart);
                 /*
-		 * 1. Choose random node (0, probably)
+                 * 1. Choose random node (0, probably)
 		 * 2. Add to tree
 		 * 3. Check all the nodes in the tree 
 		 * 		and compare their closest neighbors. 

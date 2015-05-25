@@ -39,7 +39,8 @@ public class Ranged {
    * 	The type refers to what kind of weapon it is.
    * 	Ex:
    * 		Blunderbuss is a shotgun with many weak pellets.
-   * 		Cannon has a low firerate but huge bullets with massive knockback and damage (piercing?)
+   * 		Cannon has a low firerate but huge bullets with massive knockback and damage
+   * 		(piercing?)
    * 		Pistol, semi-auto medium pellets with decent damage.
    *
    */
@@ -63,7 +64,7 @@ public class Ranged {
     return "";
   }
         /*
-	 * The suffix can give huge modifiers to guns, for example fire damage, piercing,
+         * The suffix can give huge modifiers to guns, for example fire damage, piercing,
 	 * bleed or similar on (maybe) every shot. These modifiers are, however, 
 	 * rare(at least the good ones), so getting a good one is considered lucky.
 	 */

@@ -26,8 +26,8 @@ public class UnifiablePolyedge {
   }
 
   /**
-   * Creates a new unifiable polyedge from the given map.
-   * This method only takes into account 2 tile-types; 0 and 1
+   * Creates a new unifiable polyedge from the given map. This method only takes into account 2
+   * tile-types; 0 and 1
    *
    * @param map The int[][] to create map from
    */

@@ -21,57 +21,6 @@ public class AStar {
     nodes = new ArrayList<StarNode>();
   }
 
-  /**
-   * Almost works FIXME
-   *
-   * @param path  The path as an ArrayList of Vector2s
-   * @param walls ArrayList of intersectors blocking sightlines
-   * @return The path with the unnecessary nodes cut
-   */
-  public static ArrayList<Vector2> postSmooth(ArrayList<Vector2> path, ArrayList<Line> walls) {
-    ArrayList<Vector2> toRemove = new ArrayList<>();
-
-    for (int i = 0; i < path.size(); i++) {
-      // If node is already scheduled for removal, skip
-      Vector2 vi = path.get(i);
-      if (toRemove.contains(vi)) {
-        continue;
-      }
-
-      for (int j = i + 2; j < path.size(); j++) {
-        Vector2 vj = path.get(j);
-        if (toRemove.contains(vj)) {
-          continue;
-        }
-        if (!lineLineList(new Line(vi, vj), walls)) {
-          toRemove.add(path.get(j - 1));
-        }
-      }
-    }
-
-    while (toRemove.size() > 0) {
-      path.remove(toRemove.get(0));
-      toRemove.remove(0);
-    }
-    return path;
-  }
-
-  /**
-   * FIXME
-   *
-   * @param l     The line to check against the list
-   * @param lines List of lines to check against Line l
-   * @return Boolean representing intersection
-   */
-  public static boolean lineLineList(Line l, ArrayList<Line> lines) {
-    for (Line l2 : lines) {
-      if (Intersect.intersection(l, l2)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   public void addNode(float x, float y) {
     nodes.add(new StarNode(x, y));
   }
@@ -215,7 +164,8 @@ public class AStar {
     System.out.println("Detecting nodes in inner corners...");
     ArrayList<StarNode> toRemove = new ArrayList<StarNode>();
     for (StarNode n : nodes) {
-      // TODO Refactor this method with a for(int i = 0; i < size;) if(nodeIsToBeRemoved){removeNode and i++}
+      // TODO Refactor this method with a for(int i = 0; i < size;) if(nodeIsToBeRemoved)
+      // {removeNode and i++}
       // Lines on this point
       ArrayList<Line> linesOnNode = getLinesFromThisPoint(n.x, n.y, polyedge.getEdges());
       if (linesOnNode.size() != 2) { // If node does not have exactly 2 lines, remove it
@@ -384,6 +334,57 @@ public class AStar {
       }
     }
     return closestNode;
+  }
+
+  /**
+   * Almost works FIXME
+   *
+   * @param path  The path as an ArrayList of Vector2s
+   * @param walls ArrayList of intersectors blocking sightlines
+   * @return The path with the unnecessary nodes cut
+   */
+  public static ArrayList<Vector2> postSmooth(ArrayList<Vector2> path, ArrayList<Line> walls) {
+    ArrayList<Vector2> toRemove = new ArrayList<>();
+
+    for (int i = 0; i < path.size(); i++) {
+      // If node is already scheduled for removal, skip
+      Vector2 vi = path.get(i);
+      if (toRemove.contains(vi)) {
+        continue;
+      }
+
+      for (int j = i + 2; j < path.size(); j++) {
+        Vector2 vj = path.get(j);
+        if (toRemove.contains(vj)) {
+          continue;
+        }
+        if (!lineLineList(new Line(vi, vj), walls)) {
+          toRemove.add(path.get(j - 1));
+        }
+      }
+    }
+
+    while (toRemove.size() > 0) {
+      path.remove(toRemove.get(0));
+      toRemove.remove(0);
+    }
+    return path;
+  }
+
+  /**
+   * FIXME
+   *
+   * @param l     The line to check against the list
+   * @param lines List of lines to check against Line l
+   * @return Boolean representing intersection
+   */
+  public static boolean lineLineList(Line l, ArrayList<Line> lines) {
+    for (Line l2 : lines) {
+      if (Intersect.intersection(l, l2)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

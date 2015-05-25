@@ -12,8 +12,9 @@ import java.util.Random;
 public class WeaponGenerator {
 
 	/*
-	 * Every gun has three modifiers as to what kind of weapon it is.
-	 * Prefix, suffix and type. The type is the main modifier to tell what kind of weapon it is.
+         * Every gun has three modifiers as to what kind of weapon it is.
+	 * Prefix, suffix and type. The type is the main modifier to tell what kind of weapon it
+	  * is.
 	 * The prefix and suffix both have several modifiers to what kind of damage the gun deals, 
 	 * how many bullets it fires and so on... The type defines what kind of gun it is.
 	 * 

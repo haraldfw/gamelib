@@ -43,7 +43,9 @@ public class IntVector2 {
 
   @Override
   public boolean equals(Object obj) {
-    if(!(obj instanceof IntVector2)) return false;
+    if (!(obj instanceof IntVector2)) {
+      return false;
+    }
 
     IntVector2 v = (IntVector2) obj;
     return x == v.x && y == v.y;

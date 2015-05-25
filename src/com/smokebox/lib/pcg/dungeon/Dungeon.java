@@ -7,7 +7,7 @@ import java.util.Random;
 public class Dungeon {
 
 	/*
-	 * 3: Door
+         * 3: Door
 	 * 2: Perimeter
 	 * 1: Floor
 	 * 0: Nothingness

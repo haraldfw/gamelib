@@ -9,7 +9,7 @@ public class Main {
    */
   public static void main(String[] args) {
                 /*Random rand = new Random(1337);
-		Floor f = CellAutomataCaves.generateCaves(75, 50, rand);
+                Floor f = CellAutomataCaves.generateCaves(75, 50, rand);
 		
 		RogueBasinDungeon r = new RogueBasinDungeon();
 		

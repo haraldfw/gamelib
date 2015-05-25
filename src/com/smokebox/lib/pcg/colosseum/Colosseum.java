@@ -11,7 +11,7 @@ public class Colosseum {
 
     // Place obstacles
                 /*	Place random rectangles in the middle
-		 * 	Push outwards
+                 * 	Push outwards
 		 */
 
     return map;

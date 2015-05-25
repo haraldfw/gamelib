@@ -268,7 +268,8 @@ public class Array2 {
         // If ignoredInts does not contain the mapTile
         if (int1ContainsInt(tileInQuestion, ignoredInts)) {
           boundFound = false;
-          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " + boundFound);
+          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " +
+          // boundFound);
         }
         // Increment the y-value
         yCheck++;
@@ -301,7 +302,8 @@ public class Array2 {
         // If ignoredInts does not contain the mapTile
         if (int1ContainsInt(tileInQuestion, ignoredInts)) {
           boundFound = false;
-          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " + boundFound);
+          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " +
+          // boundFound);
         }
         // Increment the y-value
         yCheck++;
@@ -334,7 +336,8 @@ public class Array2 {
         // If ignoredInts does not contain the mapTile
         if (int1ContainsInt(tileInQuestion, ignoredInts)) {
           boundFound = false;
-          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " + boundFound);
+          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " +
+          // boundFound);
         }
         // Increment the -value
         xCheck++;
@@ -367,7 +370,8 @@ public class Array2 {
         // If ignoredInts does not contain the mapTile
         if (int1ContainsInt(tileInQuestion, ignoredInts)) {
           boundFound = false;
-          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " + boundFound);
+          //System.out.println(tileInQuestion + " exists in ignoredInts. boundFound = " +
+          // boundFound);
         }
         // Increment the x-value
         xCheck++;

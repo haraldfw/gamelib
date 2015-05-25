@@ -215,7 +215,7 @@ public class Intersect {
 
   public static boolean pointAxisAlignedLine(float x, float y, Line l) {
                 /* readable
-		if(l.y == l.y2) return p.y == l.y && inRng(p.x, l.x, l.x2);
+                if(l.y == l.y2) return p.y == l.y && inRng(p.x, l.x, l.x2);
 		if(l.x == l.x2) return p.x == l.x && inRng(p.y, l.y, l.y2);
 		return false;
 		Non-readable*/
