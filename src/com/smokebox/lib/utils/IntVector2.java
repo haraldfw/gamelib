@@ -15,6 +15,11 @@ public class IntVector2 {
     this.y = 0;
   }
 
+  public IntVector2(IntVector2 v) {
+    this.x = v.x;
+    this.y = v.y;
+  }
+
   public IntVector2 add(IntVector2 toAdd) {
     this.x += toAdd.x;
     this.y += toAdd.y;
