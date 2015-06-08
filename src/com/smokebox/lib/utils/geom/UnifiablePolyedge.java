@@ -97,6 +97,7 @@ public class UnifiablePolyedge {
   public UnifiablePolyedge unify() {
 // Remove duplicates -----------------------------------------------
     makeDirectionsRightUp(edges);
+    float timeStarted = System.currentTimeMillis();
 
     System.out.println("Unifying polyedge");
     System.out.println("Size of edge-list: " + edges.size());
@@ -109,19 +110,21 @@ public class UnifiablePolyedge {
       for (int j = i + 1; j < edges.size(); j++) {
         Line l2 = edges.get(j);
 
-        if (isEqual(l, l2)) {
+        if (l.equalTo(l2)) {
           toRemove.add(l);
           toRemove.add(l2);
         }
       }
     }
 
+    System.out.println("Time used: " + (System.currentTimeMillis() - timeStarted) / 1000.0 + " seconds");
     System.out.println("Removing " + toRemove.size() + " duplicate lines");
     while (toRemove.size() > 0) {
       Line l = toRemove.get(0);
       edges.remove(l);
       toRemove.remove(l);
     }
+    System.out.println("Time used: " + (System.currentTimeMillis() - timeStarted)/1000.0 + " seconds");
     System.out.println("Done. New size of edge-list is: " + edges.size());
 
 // Merge lines that are successive ---------------------------------------
@@ -215,6 +218,7 @@ public class UnifiablePolyedge {
       }
     }
     System.out.println("Vertical lines merged.");
+    System.out.println("Time used: " + (System.currentTimeMillis() - timeStarted)/1000 + " seconds");
     System.out.println("Done. New size of edge-list is: " + edges.size());
     return this;
   }
@@ -288,13 +292,6 @@ public class UnifiablePolyedge {
         l.y = t;
       }
     }
-  }
-
-  private boolean isEqual(Line l, Line l2) {
-    return l.x == l2.x
-           && l.x2 == l2.x2
-           && l.y == l2.y
-           && l.y2 == l2.y2;
   }
 
   public ArrayList<Line> getEdges() {

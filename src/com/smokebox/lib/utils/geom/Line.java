@@ -174,8 +174,8 @@ public class Line {
     y2 += y;
   }
 
-  public boolean equalTo(Line l2) {
-    return x == l2.x && x2 == l2.x2 && y == l2.y && y2 == l2.y2;
+  public boolean equalTo(Line l) {
+    return x == l.x && x2 == l.x2 && y == l.y && y2 == l.y2;
   }
 
   public Vector2 getMinimumDistance(float cx, float cy) {
@@ -212,5 +212,13 @@ public class Line {
    */
   public Vector2 getAsVector2() {
     return new Vector2(x2 - x, y2 - y);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if(!(obj instanceof Line)) {
+      return false;
+    }
+    return equalTo((Line) obj);
   }
 }
