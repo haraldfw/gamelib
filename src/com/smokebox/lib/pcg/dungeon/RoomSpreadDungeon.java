@@ -210,7 +210,7 @@ public class RoomSpreadDungeon {
     return map;
   }
 
-  private static int[] findBounds(List<Cell> rooms) {
+  public static int[] findBounds(List<Cell> rooms) {
     int[] bounds = new int[4];
 
     for (int i = 0; i < rooms.size(); i++) {
