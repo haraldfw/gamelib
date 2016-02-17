@@ -34,7 +34,7 @@ public class RoomSpreadDungeon {
     // The distribution of the rooms on spawn.
     // A smaller distribution generally gives a poorer performance -
     // due to the separation-process taking more time
-    int distribution = (cells * roomDimScalar) / 30 + 1;
+    float distributionScale = cells * roomDimScalar / 2;
     // The accepted ratio for the rooms' dimensions.
     // A higher number gives longer rooms
     //float maxRoomRatio = 2f;
@@ -42,12 +42,12 @@ public class RoomSpreadDungeon {
     // Get random rooms
     System.out.println("Generating rooms");
     System.out.println("\tCells: " + cells);
-    System.out.println("\tDistribution: " + distribution);
+    System.out.println("\tDistribution: " + distributionScale);
     System.out.println("\tRatio: " + 1 / maxRoomRatio + "-" + maxRoomRatio);
 
     ArrayList<Cell>
         rooms =
-        getListRandomCells(cells, random, roomDimScalar, distribution, maxRoomRatio);
+        getListRandomCells(cells, random, roomDimScalar, distributionScale, distributionScale,  maxRoomRatio);
 
     System.out.println("Generating rooms finished. Time used so far: "
                        + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
@@ -168,7 +168,8 @@ public class RoomSpreadDungeon {
       int cells,
       Random random,
       float roomDimScalar,
-      int distribution,
+      float xDistributionScale,
+      float yDistrubutionScale,
       float maxSideRatio) {
     Rectangle rect = new Rectangle();
     ArrayList<Cell> rooms = new ArrayList<>();
@@ -177,8 +178,8 @@ public class RoomSpreadDungeon {
 
       while (!roomAccepted) {
         rect = new Rectangle(
-            random.nextInt(distribution) - distribution / 2,
-            random.nextInt(distribution) - distribution / 2,
+            random.nextFloat()*xDistributionScale,
+            random.nextFloat()*yDistrubutionScale,
             (float) Math.round(Math.abs(random.nextGaussian() * roomDimScalar)),
             (float) Math.round(Math.abs(random.nextGaussian() * roomDimScalar))
         );
@@ -250,5 +251,25 @@ public class RoomSpreadDungeon {
     }
 
     return map;
+  }
+
+  public static RoomsWithTree roomSpreadFloor2(int amountOfCells, float widthSpreadScale,
+                                               float heightSpreadScale, int roomDimScalar,
+                                               float maxRoomRatio, Random rand) {
+    if (rand == null) {
+      rand = new Random();
+    }
+    ArrayList<Cell> cells = new ArrayList<>();
+    ArrayList<Cell> finalCells = new ArrayList<>();
+    ArrayList<Rectangle> corridors = new ArrayList<>();
+    MinimumSpanningTree tree = new MinimumSpanningTree(cells);
+
+    for (int i = 0; i < amountOfCells * 10; i++) {
+      cells.add(new Cell(
+          new Rectangle(rand.nextFloat() * widthSpreadScale, rand.nextFloat() * heightSpreadScale,
+                        rand.nextFloat() * roomDimScalar, rand.nextFloat() * roomDimScalar)));
+    }
+
+    return new RoomsWithTree(tree, finalCells, cells, corridors);
   }
 }
