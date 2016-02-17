@@ -29,7 +29,7 @@ public class RoomSpreadDungeon {
 
     Random random = (rand == null) ? new Random() : rand;
 
-    // A scalar for room-dimensions
+    // A scalar for room-dimensions 
     //int roomDimScalar = 5;
     // The distribution of the rooms on spawn.
     // A smaller distribution generally gives a poorer performance -
