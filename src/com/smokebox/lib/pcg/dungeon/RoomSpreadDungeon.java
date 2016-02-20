@@ -29,7 +29,7 @@ public class RoomSpreadDungeon {
 
     Random random = (rand == null) ? new Random() : rand;
 
-    // A scalar for room-dimensions 
+    // A scalar for room-dimensions
     //int roomDimScalar = 5;
     // The distribution of the rooms on spawn.
     // A smaller distribution generally gives a poorer performance -
@@ -47,7 +47,8 @@ public class RoomSpreadDungeon {
 
     ArrayList<Cell>
         rooms =
-        getListRandomCells(cells, random, roomDimScalar, distributionScale, distributionScale,  maxRoomRatio);
+        getListRandomCells(cells, random, roomDimScalar, distributionScale, distributionScale,
+                           maxRoomRatio);
 
     System.out.println("Generating rooms finished. Time used so far: "
                        + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
@@ -178,8 +179,8 @@ public class RoomSpreadDungeon {
 
       while (!roomAccepted) {
         rect = new Rectangle(
-            random.nextFloat()*xDistributionScale,
-            random.nextFloat()*yDistrubutionScale,
+            random.nextFloat() * xDistributionScale,
+            random.nextFloat() * yDistrubutionScale,
             (float) Math.round(Math.abs(random.nextGaussian() * roomDimScalar)),
             (float) Math.round(Math.abs(random.nextGaussian() * roomDimScalar))
         );
@@ -253,8 +254,8 @@ public class RoomSpreadDungeon {
     return map;
   }
 
-  public static RoomsWithTree roomSpreadFloor2(int amountOfCells, float widthSpreadScale,
-                                               float heightSpreadScale, int roomDimScalar,
+  public static RoomsWithTree roomSpreadFloor2(int amountOfCells, float xSpreadScale,
+                                               float ySpreadScale, int roomDimScalar,
                                                float maxRoomRatio, Random rand) {
     if (rand == null) {
       rand = new Random();
@@ -266,7 +267,7 @@ public class RoomSpreadDungeon {
 
     for (int i = 0; i < amountOfCells * 10; i++) {
       cells.add(new Cell(
-          new Rectangle(rand.nextFloat() * widthSpreadScale, rand.nextFloat() * heightSpreadScale,
+          new Rectangle(rand.nextFloat() * xSpreadScale, rand.nextFloat() * ySpreadScale,
                         rand.nextFloat() * roomDimScalar, rand.nextFloat() * roomDimScalar)));
     }
 
