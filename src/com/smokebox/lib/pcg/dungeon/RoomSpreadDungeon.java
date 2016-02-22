@@ -253,24 +253,4 @@ public class RoomSpreadDungeon {
 
     return map;
   }
-
-  public static RoomsWithTree roomSpreadFloor2(int amountOfCells, float xSpreadScale,
-                                               float ySpreadScale, int roomDimScalar,
-                                               float maxRoomRatio, Random rand) {
-    if (rand == null) {
-      rand = new Random();
-    }
-    ArrayList<Cell> cells = new ArrayList<>();
-    ArrayList<Cell> finalCells = new ArrayList<>();
-    ArrayList<Rectangle> corridors = new ArrayList<>();
-    MinimumSpanningTree tree = new MinimumSpanningTree(cells);
-
-    for (int i = 0; i < amountOfCells * 10; i++) {
-      cells.add(new Cell(
-          new Rectangle(rand.nextFloat() * xSpreadScale, rand.nextFloat() * ySpreadScale,
-                        rand.nextFloat() * roomDimScalar, rand.nextFloat() * roomDimScalar)));
-    }
-
-    return new RoomsWithTree(tree, finalCells, cells, corridors);
-  }
 }
