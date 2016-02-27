@@ -124,7 +124,7 @@ public class Line {
 
   /**
    * Ensures and corrects if needed the direction of the line. Ensures the line climbs to the
-   * right(x < x2.
+   * right(x < x2).
    */
   public Line ensureCorrectDirection() {
     if (x > x2) {
