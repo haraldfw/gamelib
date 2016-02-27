@@ -1,11 +1,12 @@
 package com.smokebox.lib.pcg.dungeon;
 
 import com.smokebox.lib.utils.Intersect;
+import com.smokebox.lib.utils.geom.Line;
 import com.smokebox.lib.utils.geom.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -19,7 +20,8 @@ public class RoomSpreadNew {
 
   public static int[][] getNew(int amountOfCells, float xSpreadScale,
                                float ySpreadScale, float roomDimScalar,
-                               float maxRoomRatio, Random rand) {
+                               int corridorWidth, float maxRoomRatio,
+                               Random rand) {
     if (rand == null) {
       rand = new Random();
     }
@@ -46,18 +48,54 @@ public class RoomSpreadNew {
     // Fill empty spaces
     fillEmptySpace(rectangles);
 
-    //
+    // Tree for corridor-spanning
+    List<Line> corridorLines = MinimumSpanningTree.createFromRects(mainRooms).edges;
 
+    rectangles = addCorridors(rectangles, corridorLines, corridorWidth, rand);
 
-    return asArr(getBiggestRooms(amountOfCells, rectangles));
+    System.out.println("final: " + Arrays.toString(findBounds(rectangles)));
+
+    return asArr(rectangles);
+  }
+
+  private static List<Rectangle> addCorridors(List<Rectangle> rectangles, List<Line> edges,
+                                   int corridorWidth, Random random) {
+    List<Rectangle> corridorRects = new ArrayList<>();
+    for (Line l : edges) {
+      l.ensureCorrectDirection();
+      // all corridors turn one way as of now, TODO fix this
+      float x = l.x - 1;
+      float y = l.y - corridorWidth / 2.0f;
+      float w = l.x2 - l.x + 1;
+      float h = corridorWidth;
+      corridorRects.add(new Rectangle(x, y, w, h));
+      x = l.x2 - corridorWidth / 2.0f;
+      y = (l.y <= l.y2 ? l.y : l.y2) - 1;
+      w = corridorWidth;
+      h = Math.abs(l.y + l.y2) + 1;
+      corridorRects.add(new Rectangle(x, y, w, h));
+    }
+
+    List<Rectangle> newRooms = new ArrayList<>();
+    for (Rectangle corr : corridorRects) {
+      for (Rectangle r : rectangles) {
+        if (Intersect.intersection(corr, r)) {
+          newRooms.add(r);
+        }
+      }
+    }
+
+    System.out.println(Arrays.toString(corridorRects.toArray()));
+    return newRooms;
   }
 
   private static int[][] asArr(List<Rectangle> rectangles) {
     int[] bounds = findBounds(rectangles);
+    System.out.println(rectangles.size());
     int[][] map = new int[bounds[2]][bounds[3]];
-    for(Rectangle r : rectangles) {
-      for(int x = (int) r.x; x < r.x2(); x++) {
-        for(int y = (int) r.y; y < r.y2(); y++) {
+    for (Rectangle r : rectangles) {
+      for (int x = (int) r.x; x < r.x2(); x++) {
+        for (int y = (int) r.y; y < r.y2(); y++) {
           map[x][y] = 1;
         }
       }
@@ -71,12 +109,8 @@ public class RoomSpreadNew {
           "amount is larger than rectangles-list; amount: " + amount
           + ", rectangles-size: " + rectangles.size());
     }
-    Collections.sort(rectangles, new Comparator<Rectangle>() {
-      @Override
-      public int compare(Rectangle o1, Rectangle o2) {
-        return (int) Math.floor(o2.area() - o1.area());
-      }
-    });
+    Collections.sort(rectangles,
+                     (Rectangle o1, Rectangle o2) -> (int) Math.floor(o2.area() - o1.area()));
 
     List<Rectangle> biggest = new ArrayList<>();
     for (int i = 0; i < amount; i++) {
@@ -87,6 +121,7 @@ public class RoomSpreadNew {
 
   private static void fillEmptySpace(List<Rectangle> rectangles) {
     int[] bounds = findBounds(rectangles);
+
     List<Rectangle> toAdd = new ArrayList<>();
     for (int x = 0; x < bounds[2]; x++) {
       for (int y = 0; y < bounds[3]; y++) {
