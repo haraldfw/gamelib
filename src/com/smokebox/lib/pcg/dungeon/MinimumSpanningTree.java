@@ -2,6 +2,7 @@ package com.smokebox.lib.pcg.dungeon;
 
 import com.smokebox.lib.utils.MathUtils;
 import com.smokebox.lib.utils.geom.Line;
+import com.smokebox.lib.utils.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,24 +13,19 @@ import java.util.List;
  */
 public class MinimumSpanningTree {
 
-  public ArrayList<Node> nodesInTree;
-  public ArrayList<Line> edges;
-  ArrayList<Node> openNodes;
+  public List<Node> nodesInTree;
+  public List<Line> edges;
   float[][] relationChart;
 
-  public MinimumSpanningTree(ArrayList<Cell> cells) {
-    openNodes = new ArrayList<>();
-
-    addCellsToNodeList(cells, openNodes);
-
+  public MinimumSpanningTree(List<Node> openNodes) {
     relationChart = calculateRelations(openNodes);
 
     //Array2.printFloat2(relationChart);
                 /*
                  * 1. Choose random node (0, probably)
 		 * 2. Add to tree
-		 * 3. Check all the nodes in the tree 
-		 * 		and compare their closest neighbors. 
+		 * 3. Check all the nodes in the tree
+		 * 		and compare their closest neighbors.
 		 * 4. Add the closest node to the tree
 		 * 5. Repeat step from step 3. until openNodes-list is empty
 		 */
@@ -107,13 +103,21 @@ public class MinimumSpanningTree {
     return relations;
   }
 
-  public ArrayList<Node> addCellsToNodeList(ArrayList<Cell> from, ArrayList<Node> to) {
-
-    for (int i = 0; i < from.size(); i++) {
-      Cell c = from.get(i);
-      to.add(new Node(c.rect.middlePos().x, c.rect.middlePos().y, i));
+  public static MinimumSpanningTree createFromRects(List<Rectangle> rectangles) {
+    List<Node> nodes = new ArrayList<>();
+    for (int i = 0; i < rectangles.size(); i++) {
+      Rectangle r = rectangles.get(i);
+      nodes.add(new Node(r.middlePos().x, r.middlePos().y, i));
     }
+    return new MinimumSpanningTree(nodes);
+  }
 
-    return to;
+  public static MinimumSpanningTree createFromCells(List<Cell> cells) {
+    List<Node> nodes = new ArrayList<>();
+    for (int i = 0; i < cells.size(); i++) {
+      Cell c = cells.get(i);
+      nodes.add(new Node(c.rect.middlePos().x, c.rect.middlePos().y, i));
+    }
+    return new MinimumSpanningTree(nodes);
   }
 }

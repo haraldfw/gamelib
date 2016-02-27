@@ -89,7 +89,7 @@ public class RoomSpreadDungeon {
     }
 
     // Tree
-    MinimumSpanningTree tree = new MinimumSpanningTree(biggerRooms);
+    MinimumSpanningTree tree = MinimumSpanningTree.createFromCells(biggerRooms);
     timeOnTree = System.nanoTime() - timeStarted - timeOnRoomsAndSeperation;
 
     // Edges

@@ -1,9 +1,11 @@
 package com.smokebox.lib.pcg.dungeon;
 
+import com.smokebox.lib.utils.Intersect;
 import com.smokebox.lib.utils.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -16,73 +18,166 @@ public class RoomSpreadNew {
   }
 
   public static int[][] getNew(int amountOfCells, float xSpreadScale,
-                               float ySpreadScale, int roomDimScalar,
+                               float ySpreadScale, float roomDimScalar,
                                float maxRoomRatio, Random rand) {
     if (rand == null) {
       rand = new Random();
     }
     // generate list of rectangles
     List<Rectangle> rectangles =
-        generateRects(amountOfCells, xSpreadScale, ySpreadScale, roomDimScalar, maxRoomRatio, rand);
+        generateRectangles(amountOfCells, xSpreadScale, ySpreadScale, roomDimScalar, maxRoomRatio,
+                           rand);
 
-    // seperate rectangles
-    seperate(rectangles);
+    // separate rectangles
+    separate(rectangles, rand);
+
+    // round the positions of the rectangles
+    for (Rectangle r : rectangles) {
+      r.floor();
+    }
+
+    // shift map so that the left and bottom bounds are at 0
+    int[] bounds = findBounds(rectangles);
+    shiftRectangles(rectangles, bounds);
+
+    // select the biggest rooms
+    List<Rectangle> mainRooms = getBiggestRooms(amountOfCells, rectangles);
+
+    // Fill empty spaces
+    fillEmptySpace(rectangles);
+
+    //
 
 
-    return new int[0][];
+    return asArr(getBiggestRooms(amountOfCells, rectangles));
   }
 
-  private static List<Rectangle> generateRects(int amountOfCells, float xSpreadScale,
-                                               float ySpreadScale, int roomDimScalar,
-                                               float maxRoomRatio, Random rand) {
+  private static int[][] asArr(List<Rectangle> rectangles) {
+    int[] bounds = findBounds(rectangles);
+    int[][] map = new int[bounds[2]][bounds[3]];
+    for(Rectangle r : rectangles) {
+      for(int x = (int) r.x; x < r.x2(); x++) {
+        for(int y = (int) r.y; y < r.y2(); y++) {
+          map[x][y] = 1;
+        }
+      }
+    }
+    return map;
+  }
+
+  private static List<Rectangle> getBiggestRooms(int amount, List<Rectangle> rectangles) {
+    if (amount >= rectangles.size()) {
+      throw new IllegalArgumentException(
+          "amount is larger than rectangles-list; amount: " + amount
+          + ", rectangles-size: " + rectangles.size());
+    }
+    Collections.sort(rectangles, new Comparator<Rectangle>() {
+      @Override
+      public int compare(Rectangle o1, Rectangle o2) {
+        return (int) Math.floor(o2.area() - o1.area());
+      }
+    });
+
+    List<Rectangle> biggest = new ArrayList<>();
+    for (int i = 0; i < amount; i++) {
+      biggest.add(rectangles.get(i));
+    }
+    return biggest;
+  }
+
+  private static void fillEmptySpace(List<Rectangle> rectangles) {
+    int[] bounds = findBounds(rectangles);
+    List<Rectangle> toAdd = new ArrayList<>();
+    for (int x = 0; x < bounds[2]; x++) {
+      for (int y = 0; y < bounds[3]; y++) {
+        if (!intersects(x, y, rectangles)) {
+          toAdd.add(new Rectangle(x, y, 1, 1));
+        }
+      }
+    }
+    for (Rectangle r : toAdd) {
+      rectangles.add(r);
+    }
+  }
+
+  private static boolean intersects(int x, int y, List<Rectangle> rectangles) {
+    for (Rectangle r : rectangles) {
+      if (!notIntersects(x, y, r)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean notIntersects(int x, int y, Rectangle r) {
+    return x < r.x || r.x >= r.x2() || y < r.y || r.y >= r.y2();
+  }
+
+  private static List<Rectangle> generateRectangles(int amountOfCells, float xSpreadScale,
+                                                    float ySpreadScale, float roomDimScalar,
+                                                    float maxRoomRatio, Random rand) {
     List<Rectangle> rects = new ArrayList<>();
     while (rects.size() < amountOfCells * 10) {
       // generate a new rect with random specs.
-      Rectangle rect =
-          new Rectangle(rand.nextFloat() * xSpreadScale, rand.nextFloat() * ySpreadScale,
-                        rand.nextFloat() * roomDimScalar, rand.nextFloat() * roomDimScalar);
+      float x = rand.nextFloat() * xSpreadScale;
+      float y = rand.nextFloat() * ySpreadScale;
+      float w = (rand.nextFloat() + 1) * roomDimScalar;
+      float h = (rand.nextFloat() + 1) * roomDimScalar;
+      Rectangle rect = new Rectangle(x, y, w, h);
       // if specs pass ratio-check, add to rectangle-list
-      if (rect.width / rect.height <= maxRoomRatio && rect.height / rect.width <= maxRoomRatio) {
+      float ratio = rect.height / rect.width;
+      if (ratio < maxRoomRatio && ratio > 1 / maxRoomRatio) {
         rects.add(rect);
       }
     }
     return rects;
   }
 
-  private static void seperate(List<Rectangle> rectangles) {
-    List<Rectangle> notHandled = new ArrayList<>();
-    Collections.copy(notHandled, rectangles);
-    while (notHandled.size() > 0) {
-      // get the first rect in the notHandled-list
-      Rectangle toHandle = notHandled.get(0);
-      rectangles.remove(0);
-      // if this was the last rectangle in the list, stop the loop
-      if (notHandled.size() == 0) {
-        break;
-      }
-      for (Rectangle r : notHandled) {
-
-      }
+  private static void separate(List<Rectangle> rectangles, Random random) {
+    ArrayList<Cell> asCells = new ArrayList<>();
+    for (Rectangle r : rectangles) {
+      asCells.add(new Cell(r));
+    }
+    while (Intersect.runOneSeparationIteration(asCells, random, 0.1f)) {
+      ;
     }
   }
 
-  public static RoomsWithTree roomSpreadFloor2(int amountOfCells, float xSpreadScale,
-                                               float ySpreadScale, int roomDimScalar,
-                                               float maxRoomRatio, Random rand) {
-    if (rand == null) {
-      rand = new Random();
-    }
-    ArrayList<Cell> cells = new ArrayList<>();
-    ArrayList<Cell> finalCells = new ArrayList<>();
-    ArrayList<Rectangle> corridors = new ArrayList<>();
-    MinimumSpanningTree tree = new MinimumSpanningTree(cells);
+  private static int[] findBounds(List<Rectangle> rectangles) {
+    // bounds{left, bottom, right, top}
+    int[] bounds =
+        new int[]{Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MIN_VALUE, Integer.MIN_VALUE};
+    // find the outer most rectangles
+    for (Rectangle rect : rectangles) {
 
-    for (int i = 0; i < amountOfCells * 10; i++) {
-      cells.add(new Cell(
-          new Rectangle(rand.nextFloat() * xSpreadScale, rand.nextFloat() * ySpreadScale,
-                        rand.nextFloat() * roomDimScalar, rand.nextFloat() * roomDimScalar)));
+      float xLeft = rect.x; // left bound
+      if (xLeft < bounds[0]) {
+        bounds[0] = (int) Math.floor(xLeft);
+      }
+
+      float yBot = rect.y; // bottom bound
+      if (yBot < bounds[1]) {
+        bounds[1] = (int) Math.floor(yBot);
+      }
+
+      float xRight = rect.x + rect.width; // right bound
+      if (xRight > bounds[2]) {
+        bounds[2] = (int) Math.ceil(xRight);
+      }
+
+      float yTop = rect.y + rect.height; // top bound
+      if (yTop > bounds[3]) {
+        bounds[3] = (int) Math.ceil(yTop);
+      }
     }
 
-    return new RoomsWithTree(tree, finalCells, cells, corridors);
+    return bounds;
+  }
+
+  private static void shiftRectangles(List<Rectangle> rectangles, int[] bounds) {
+    for (Rectangle rect : rectangles) {
+      rect.x -= bounds[0];
+      rect.y -= bounds[1];
+    }
   }
 }
