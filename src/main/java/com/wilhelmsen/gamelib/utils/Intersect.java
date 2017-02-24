@@ -5,6 +5,7 @@ import com.wilhelmsen.gamelib.utils.geom.Circle;
 import com.wilhelmsen.gamelib.utils.geom.HalfSpace;
 import com.wilhelmsen.gamelib.utils.geom.Line;
 import com.wilhelmsen.gamelib.utils.geom.Ray;
+import com.wilhelmsen.gamelib.utils.geom.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Random;

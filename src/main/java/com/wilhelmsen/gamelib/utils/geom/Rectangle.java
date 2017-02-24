@@ -42,8 +42,8 @@ public class Rectangle {
   }
 
   public void addToPosition(Vector2 v) {
-    x += v.x;
-    y += v.y;
+    this.x += v.x;
+    this.y += v.y;
   }
 
   public void addToPosition(float x, float y) {
@@ -51,30 +51,24 @@ public class Rectangle {
     this.y += y;
   }
 
-  public void print() {
-    System.out.println("-- Rectangle --");
-    System.out.println("Position:   " + x + ", " + y);
-    System.out.println("Dimensions: " + width + ", " + height);
-  }
-
   public Rectangle getScaled(float f) {
     return new Rectangle(x * f, y * f, width * f, height * f);
   }
 
   public Rectangle round() {
-    Math.round(x);
-    Math.round(y);
-    Math.round(width);
-    Math.round(height);
+    this.x = (float) Math.round(x);
+    this.y = (float) Math.round(y);
+    this.width = (float) Math.round(width);
+    this.height = (float) Math.round(height);
 
     return this;
   }
 
   public Rectangle floor() {
-    Math.floor(x);
-    Math.floor(y);
-    Math.floor(width);
-    Math.floor(height);
+    this.x = (float) Math.floor(x);
+    this.y = (float) Math.floor(y);
+    this.width = (float) Math.floor(width);
+    this.height = (float) Math.floor(height);
 
     return this;
   }
@@ -131,6 +125,6 @@ public class Rectangle {
 
   @Override
   public String toString() {
-    return "x:" + x + " y:" + y + " w:" + width + " h:" + height;
+    return "Rectangle [x:" + x + ", y:" + y + ", w:" + width + ", h:" + height + "]";
   }
 }
