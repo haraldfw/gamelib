@@ -92,13 +92,8 @@ public class Intersect {
    * @return True if intersection.
    */
   public static boolean intersection(Line l, Rectangle r) {
-
-    if ((l.x < r.x && l.x2 < r.x) || (l.x > r.x + r.width && l.x2 > r.x + r.width) ||
-        (l.y < r.y && l.y2 < r.y) || (l.y > r.y + r.height && l.y2 > r.y + r.height)) {
-      return false;
-    }
-
-    return intersection(l.asRay(), r);
+    return !((l.x < r.x && l.x2 < r.x) || (l.x > r.x + r.width && l.x2 > r.x + r.width) ||
+            (l.y < r.y && l.y2 < r.y) || (l.y > r.y + r.height && l.y2 > r.y + r.height)) && intersection(l.asRay(), r);
   }
 
   /**
@@ -282,9 +277,7 @@ public class Intersect {
    * Warning: Heavy, should not be run often!
    */
   public static void separateCells(ArrayList<Cell> cells, Random r, float f) {
-    while (runOneSeparationIteration(cells, r, f)) {
-      ;
-    }
+    while (runOneSeparationIteration(cells, r, f));
   }
 
   /**
@@ -382,7 +375,7 @@ public class Intersect {
     return distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
   }
 
-  public static float horisontalPenetrationRectRect(float x, float x2, float width, float width2) {
+  public static float horizontalPenetrationRectRect(float x, float x2, float width, float width2) {
     float halfW1 = width / 2;
     float halfW2 = width2 / 2;
 
