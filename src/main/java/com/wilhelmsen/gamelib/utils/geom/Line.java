@@ -216,9 +216,6 @@ public class Line {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Line)) {
-            return false;
-        }
-        return equalTo((Line) obj);
+        return obj instanceof Line && equalTo((Line) obj);
     }
 }

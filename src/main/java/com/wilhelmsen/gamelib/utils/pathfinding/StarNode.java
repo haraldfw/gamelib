@@ -66,8 +66,6 @@ public class StarNode {
 //		        return (int) Math.round(c.weight - c2.weight);
 //		    }
 //		});
-        Collections.sort(connections, (Connection c1, Connection c2) -> {
-            return (int) Math.signum(c1.weight - c2.weight);
-        });
+        connections.sort((Connection c1, Connection c2) -> (int) Math.signum(c1.weight - c2.weight));
     }
 }

@@ -43,12 +43,12 @@ public class MinimumSpanningTree {
             int bestOpenNode = 0;
             float bestProximity = Float.MAX_VALUE;
 
-            for (int i = 0; i < nodesInTree.size(); i++) {
+            for (Node aNodesInTree1 : nodesInTree) {
 
-                for (int j = 0; j < openNodes.size(); j++) {
+                for (Node openNode : openNodes) {
 
-                    int treeNodeCheck = nodesInTree.get(i).id;
-                    int openNodeCheck = openNodes.get(j).id;
+                    int treeNodeCheck = aNodesInTree1.id;
+                    int openNodeCheck = openNode.id;
                     float distance = relationChart[treeNodeCheck][openNodeCheck];
 
                     if (distance < bestProximity) {
@@ -62,9 +62,9 @@ public class MinimumSpanningTree {
             for (int i = 0; i < openNodes.size(); i++) {
                 if (openNodes.get(i).id == bestOpenNode) {
                     nodesInTree.add(openNodes.get(i));
-                    for (int k = 0; k < nodesInTree.size(); k++) {
-                        if (nodesInTree.get(k).id == bestNodeInTree) {
-                            nodesInTree.get(k).connectTo(openNodes.get(i));
+                    for (Node aNodesInTree : nodesInTree) {
+                        if (aNodesInTree.id == bestNodeInTree) {
+                            aNodesInTree.connectTo(openNodes.get(i));
                         }
                     }
                     openNodes.remove(i);
@@ -72,14 +72,13 @@ public class MinimumSpanningTree {
             }
         }
 
-        Collections.sort(nodesInTree, (Node n, Node n2) -> n.compareTo(n2));
+        nodesInTree.sort(Node::compareTo);
 
         edges = new ArrayList<>();
 
-        for (int i = 0; i < nodesInTree.size(); i++) {
-            Node ni = nodesInTree.get(i);
-            for (int j = 0; j < nodesInTree.get(i).connectedNodes.size(); j++) {
-                Node nj = nodesInTree.get(i).connectedNodes.get(j);
+        for (Node ni : nodesInTree) {
+            for (int j = 0; j < ni.connectedNodes.size(); j++) {
+                Node nj = ni.connectedNodes.get(j);
                 edges.add(new Line(ni.x, ni.y, nj.x, nj.y));
             }
         }

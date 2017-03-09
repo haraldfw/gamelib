@@ -26,9 +26,7 @@ public class Array2 {
         }
 
         for (int x = 0; x < toBeBurned.length; x++) {
-            for (int y = 0; y < toBeBurned[0].length; y++) {
-                map[locX + x][locY + y] = toBeBurned[x][y];
-            }
+            System.arraycopy(toBeBurned[x], 0, map[locX + x], locY + 0, toBeBurned[0].length);
         }
 
         return map;
@@ -36,9 +34,9 @@ public class Array2 {
 
     public static int sumInt2(int[][] array) {
         int sum = 0;
-        for (int i = 0; i < array.length; i++) {
+        for (int[] anArray : array) {
             for (int j = 0; j < array[0].length; j++) {
-                sum += array[i][j];
+                sum += anArray[j];
             }
         }
 
@@ -93,9 +91,7 @@ public class Array2 {
         int[][] newArray = new int[array.length + buffer * 2][array[0].length + buffer * 2];
 
         for (int x = 0; x < array.length; x++) {
-            for (int y = 0; y < array[0].length; y++) {
-                newArray[x + buffer][y + buffer] = array[x][y];
-            }
+            System.arraycopy(array[x], 0, newArray[x + buffer], 0 + buffer, array[0].length);
         }
 
         return newArray;
@@ -111,9 +107,7 @@ public class Array2 {
         int[][] newArray = new int[oldArray.length][oldArray[0].length];
 
         for (int x = 0; x < oldArray.length; x++) {
-            for (int y = 0; y < oldArray[0].length; y++) {
-                newArray[x][y] = oldArray[x][y];
-            }
+            System.arraycopy(oldArray[x], 0, newArray[x], 0, oldArray[0].length);
         }
 
         return newArray;
@@ -129,8 +123,8 @@ public class Array2 {
     public static void printInt2(int[][] map) {
         for (int y = map[0].length - 1; y >= 0; y--) {
             System.out.print("\n");
-            for (int x = 0; x < map.length; x++) {
-                int m = map[x][y];
+            for (int[] aMap : map) {
+                int m = aMap[y];
                 String s = " " + String.valueOf(m);
                 //System.out.print(map[x][y]);
                 if (m == 0) {
@@ -152,8 +146,8 @@ public class Array2 {
     public static void printInt2Raw(int[][] map) {
         for (int y = map[0].length - 1; y >= 0; y--) {
             System.out.print("\n");
-            for (int x = 0; x < map.length; x++) {
-                int m = map[x][y];
+            for (int[] aMap : map) {
+                int m = aMap[y];
                 System.out.print(" \t" + String.valueOf(m));
             }
         }
@@ -226,12 +220,12 @@ public class Array2 {
         int x = 0;
         int y = 0;
 
-        for (int i = 0; i < int1.length; i++) {
+        for (int anInt1 : int1) {
             if (x == width) {
                 x = 0;
                 y++;
             }
-            int2[x][y] = int1[i];
+            int2[x][y] = anInt1;
             x++;
         }
 
@@ -399,9 +393,7 @@ public class Array2 {
         int[][] croppedMap = new int[rightBound - leftBound][topBound - bottomBound];
 
         for (int x = 0; x < croppedMap.length; x++) {
-            for (int y = 0; y < croppedMap[0].length; y++) {
-                croppedMap[x][y] = map[x + leftBound][y + bottomBound];
-            }
+            System.arraycopy(map[x + leftBound], 0 + bottomBound, croppedMap[x], 0, croppedMap[0].length);
         }
 
         return croppedMap;
@@ -477,8 +469,8 @@ public class Array2 {
      * @return Boolean telling if it contains
      */
     public static boolean int1ContainsInt(int i, int[] int1) {
-        for (int j = 0; j < int1.length; j++) {
-            if (i == int1[j]) {
+        for (int anInt1 : int1) {
+            if (i == anInt1) {
                 return true;
             }
         }
@@ -500,13 +492,7 @@ public class Array2 {
         for (int y = 0; y < map[0].length; y++) {
             for (int x = 0; x < map.length; x++) {
                 int m = map[x][y];
-                int c = 0;
-
-                if (m == 0) {
-                    c = 0;
-                } else {
-                    c = 255;
-                }
+                int c = (m == 0) ? 0 : 255;
                 theImage.setRGB(x, y, c);
             }
         }

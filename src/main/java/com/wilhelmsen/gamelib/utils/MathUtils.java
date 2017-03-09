@@ -16,8 +16,7 @@ public class MathUtils {
 
     public static float lowest(float[] list) {
         float low = list[0];
-        for (int i = 0; i < list.length; i++) {
-            float check = list[i];
+        for (float check : list) {
             if (low < check) {
                 low = check;
             }

@@ -18,7 +18,7 @@ public class AStar {
     private ArrayList<StarNode> nodes;
 
     public AStar() {
-        nodes = new ArrayList<StarNode>();
+        nodes = new ArrayList<>();
     }
 
     /**
@@ -163,7 +163,7 @@ public class AStar {
     // 	to convert different types of world-representations to
     //	a pathfinding-friendly format
     public void defineWorldFromInt2(int[][] asInt) {
-        ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
+        ArrayList<Rectangle> rects = new ArrayList<>();
         for (int i = 0; i < asInt.length; i++) {
             for (int j = 0; j < asInt[0].length; j++) {
                 if (asInt[i][j] > 0) {
@@ -172,7 +172,7 @@ public class AStar {
             }
         }
 
-        ArrayList<Line> lines = new ArrayList<Line>();
+        ArrayList<Line> lines = new ArrayList<>();
         for (Rectangle r : rects) {
             lines.add(new Line(
                     r.x, r.y,
@@ -213,7 +213,7 @@ public class AStar {
         // Remove nodes in inner corners
         System.out.println(nodes.size() + " nodes added.");
         System.out.println("Detecting nodes in inner corners...");
-        ArrayList<StarNode> toRemove = new ArrayList<StarNode>();
+        ArrayList<StarNode> toRemove = new ArrayList<>();
         for (StarNode n : nodes) {
             // TODO Refactor this method with a for(int i = 0; i < size;) if(nodeIsToBeRemoved)
             // {removeNode and i++}
@@ -256,7 +256,7 @@ public class AStar {
     }
 
     private ArrayList<Line> getLinesFromThisPoint(float x, float y, ArrayList<Line> lines) {
-        ArrayList<Line> onThisPoint = new ArrayList<Line>();
+        ArrayList<Line> onThisPoint = new ArrayList<>();
         for (Line l : lines) {
             if ((l.x == x && l.y == y) || (l.x2 == x && l.y2 == y)) {
                 onThisPoint.add(l);
@@ -376,8 +376,7 @@ public class AStar {
     public StarNode getNodeClosestTo(float x, float y) {
         StarNode closestNode = nodes.get(0);
         float closestDist = MathUtils.vectorLengthSquared(closestNode.x - x, closestNode.y - y);
-        for (int j = 0; j < nodes.size(); j++) {
-            StarNode i = nodes.get(j);
+        for (StarNode i : nodes) {
             float newDist = MathUtils.vectorLengthSquared(i.x - x, i.y - y);
             if (newDist < closestDist) {
                 closestNode = i;

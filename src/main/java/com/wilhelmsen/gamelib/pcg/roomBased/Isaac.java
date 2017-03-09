@@ -42,7 +42,7 @@ public final class Isaac {
     public static RoomDef[] generate(int amountOfRooms, float chanceForLargeRooms, int amountOfEnds,
                                      int maxWidth, int maxHeight, Random rng) {
         // list for storing the rooms, this list is returned as an array at end of algo
-        ArrayList<RoomDef> rooms = new ArrayList<RoomDef>();
+        ArrayList<RoomDef> rooms = new ArrayList<>();
 
         // place spawnRoom
         RoomDef spawn = new RoomDef(0, 0, 1, 1);

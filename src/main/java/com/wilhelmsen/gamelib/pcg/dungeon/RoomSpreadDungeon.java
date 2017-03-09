@@ -77,16 +77,13 @@ public class RoomSpreadDungeon {
 
         // Shift rooms so lowest possible coordinates start at (0,0)
         // Rooms are shifted up/right
-        for (int i = 0; i < rooms.size(); i++) {
-            Cell c = rooms.get(i);
+        for (Cell c : rooms) {
             c.rect.x -= (float) bounds[0];
             c.rect.y -= (float) bounds[1];
         }
 
         // Sort rooms by area, bigger first
-        Collections.sort(rooms, (c1, c2) -> {
-            return (int) (c2.rect.area() - c1.rect.area());
-        });
+        rooms.sort((c1, c2) -> (int) (c2.rect.area() - c1.rect.area()));
 
         ArrayList<Cell> biggerRooms = new ArrayList<>();
 
@@ -225,8 +222,8 @@ public class RoomSpreadDungeon {
     public static int[] findBounds(List<Cell> rooms) {
         int[] bounds = new int[4];
 
-        for (int i = 0; i < rooms.size(); i++) {
-            Rectangle rect = rooms.get(i).rect;
+        for (Cell room : rooms) {
+            Rectangle rect = room.rect;
 
             float xLeft = rect.x; // left bound
             if (xLeft < bounds[0]) {

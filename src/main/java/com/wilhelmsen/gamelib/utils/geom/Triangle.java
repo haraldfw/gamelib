@@ -42,33 +42,20 @@ public class Triangle {
     }
 
     public Triangle rotate(float angle) {
-        corners[0].set(rotatePoint(corners[0], origin, angle));
-        corners[1].set(rotatePoint(corners[1], origin, angle));
-        corners[2].set(rotatePoint(corners[2], origin, angle));
+        corners[0].rotate(origin, angle);
+        corners[1].rotate(origin, angle);
+        corners[2].rotate(origin, angle);
         this.angle += angle;
         return this;
     }
 
     public Triangle setRotation(float angleInRadians) {
-        corners[0].set(rotatePoint(corners[0], origin, angleInRadians - this.angle));
-        corners[1].set(rotatePoint(corners[1], origin, angleInRadians - this.angle));
-        corners[2].set(rotatePoint(corners[2], origin, angleInRadians - this.angle));
+        corners[0].rotate(origin, angleInRadians - this.angle);
+        corners[1].rotate(origin, angleInRadians - this.angle);
+        corners[2].rotate(origin, angleInRadians - this.angle);
         this.angle = angleInRadians;
-        angleInRadians += angleOffset;
+        angleInRadians += angleOffset; // wtf
         return this;
-    }
-
-    private Vector2 rotatePoint(Vector2 point, Vector2 origin, float radians) {
-        double angle = radians;
-        float ox = origin.x;
-        float oy = origin.y;
-        float x = point.x - ox;
-        float y = point.y - oy;
-        double sine = Math.sin(angle);
-        double cosine = Math.cos(angle);
-        return new Vector2(
-                (float) (x * cosine - y * sine) + ox,  // New X
-                (float) (x * sine + y * cosine) + oy); // New Y
     }
 
     public void setOrigin(float x, float y) {

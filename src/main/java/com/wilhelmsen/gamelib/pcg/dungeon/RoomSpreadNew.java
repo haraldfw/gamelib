@@ -109,8 +109,7 @@ public class RoomSpreadNew {
                     "amount is larger than rectangles-list; amount: " + amount
                             + ", rectangles-size: " + rectangles.size());
         }
-        Collections.sort(rectangles,
-                (Rectangle o1, Rectangle o2) -> (int) Math.floor(o2.area() - o1.area()));
+        rectangles.sort((Rectangle o1, Rectangle o2) -> (int) Math.floor(o2.area() - o1.area()));
 
         List<Rectangle> biggest = new ArrayList<>();
         for (int i = 0; i < amount; i++) {
@@ -173,9 +172,7 @@ public class RoomSpreadNew {
         for (Rectangle r : rectangles) {
             asCells.add(new Cell(r));
         }
-        while (Intersect.runOneSeparationIteration(asCells, random, 0.1f)) {
-            ;
-        }
+        while (Intersect.runOneSeparationIteration(asCells, random, 0.1f));
     }
 
     private static int[] findBounds(List<Rectangle> rectangles) {

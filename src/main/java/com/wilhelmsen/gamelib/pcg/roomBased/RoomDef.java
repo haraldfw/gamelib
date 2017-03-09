@@ -64,7 +64,7 @@ public final class RoomDef {
      */
     public void finalizeDoor() {
         // List of all doors that will be final
-        ArrayList<DoorDef> doorDefList = new ArrayList<DoorDef>();
+        ArrayList<DoorDef> doorDefList = new ArrayList<>();
 
         // loop through all doors. If a door does not have an end, remove it
         for (Map.Entry<String, DoorDef> entry : doorDefs.entrySet()) {

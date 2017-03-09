@@ -30,12 +30,12 @@ public class Polygon {
         float sx = vertices[0].x;
         float sy = vertices[0].y;
 
-        for (int i = 0; i < vertices.length; i++) {
-            if (vertices[i].x < sx) {
-                sx = vertices[i].x;
+        for (Vector2 vertice : vertices) {
+            if (vertice.x < sx) {
+                sx = vertice.x;
             }
-            if (vertices[i].y < sy) {
-                sy = vertices[i].y;
+            if (vertice.y < sy) {
+                sy = vertice.y;
             }
         }
 
@@ -43,8 +43,8 @@ public class Polygon {
     }
 
     public Polygon rotate(float angle) {
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].set(rotatePoint(vertices[i], origin, angle));
+        for (Vector2 vertice : vertices) {
+            vertice.rotate(origin, angle);
         }
         this.angle += angle;
         return this;
@@ -53,35 +53,22 @@ public class Polygon {
     public float[] getVerticesAsFloatArray(float xStart, float yStart) {
         float[] ver = new float[vertices.length * 2];
         int j = 0;
-        for (int i = 0; i < vertices.length; i++) {
-            ver[j] = vertices[i].x + xStart;
+        for (Vector2 vertice : vertices) {
+            ver[j] = vertice.x + xStart;
             j++;
-            ver[j] = vertices[i].y + yStart;
+            ver[j] = vertice.y + yStart;
             j++;
         }
         return ver;
     }
 
     public Polygon setRotation(float angleInRadians) {
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].set(rotatePoint(vertices[i], origin, angleInRadians - this.angle));
+        for (Vector2 vertice : vertices) {
+            vertice.rotate(origin, angleInRadians - this.angle);
         }
         this.angle = angleInRadians;
-        angleInRadians += angleOffset;
+        angleInRadians += angleOffset; // wtf
         return this;
-    }
-
-    private Vector2 rotatePoint(Vector2 point, Vector2 origin, float radians) {
-        double angle = radians;
-        float ox = origin.x;
-        float oy = origin.y;
-        float x = point.x - ox;
-        float y = point.y - oy;
-        double sine = Math.sin(angle);
-        double cosine = Math.cos(angle);
-        return new Vector2(
-                (float) (x * cosine - y * sine) + ox,  // New X
-                (float) (x * sine + y * cosine) + oy); // New Y
     }
 
     public void setOrigin(float x, float y) {
@@ -93,16 +80,16 @@ public class Polygon {
     }
 
     public void setOriginKeepRelativeDistance(float x, float y) {
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].x += -origin.x + x;
-            vertices[i].y += -origin.y + y;
+        for (Vector2 vertice : vertices) {
+            vertice.x += -origin.x + x;
+            vertice.y += -origin.y + y;
         }
         origin.set(x, y);
     }
 
     public void posAdd(float x, float y) {
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i].add(x, y);
+        for (Vector2 vertice : vertices) {
+            vertice.add(x, y);
             origin.add(x, y);
         }
     }

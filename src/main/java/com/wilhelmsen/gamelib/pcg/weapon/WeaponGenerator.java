@@ -66,14 +66,6 @@ public class WeaponGenerator {
         rand = new Random();
     }
 
-    public File generateMeleeImage() {
-        File path = new File("");
-
-        // Generate image from the stats given as parameters
-
-        return path;
-    }
-
     public String generateGunName(float grade) {
         return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
                 .getSuffix(rand, grade);

@@ -32,7 +32,7 @@ public class UnifiablePolyedge {
      * @param map The int[][] to create map from
      */
     public UnifiablePolyedge(int[][] map) {
-        ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
+        ArrayList<Rectangle> rects = new ArrayList<>();
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
                 if (map[i][j] > 0) {
@@ -41,7 +41,7 @@ public class UnifiablePolyedge {
             }
         }
 
-        ArrayList<Line> lines = new ArrayList<Line>();
+        ArrayList<Line> lines = new ArrayList<>();
         for (Rectangle r : rects) {
             lines.add(new Line(
                     r.x, r.y,
@@ -132,8 +132,8 @@ public class UnifiablePolyedge {
         float highestX = 0;
         float highestY = 0;
 
-        ArrayList<Line> horLines = new ArrayList<Line>();
-        ArrayList<Line> verLines = new ArrayList<Line>();
+        ArrayList<Line> horLines = new ArrayList<>();
+        ArrayList<Line> verLines = new ArrayList<>();
         // Split edge-list into horizontal and vertical lines
         for (Line w : edges) {
             if (w.y > highestY) {
@@ -155,19 +155,15 @@ public class UnifiablePolyedge {
         // Merge successive horizontal lines
         for (int y = 0; y <= highestY; y++) {
 
-            ArrayList<Line> xLines = new ArrayList<Line>();
+            ArrayList<Line> xLines = new ArrayList<>();
 
             for (Line w : horLines) {
                 if (w.y == y) {
                     xLines.add(w);
                 }
             }
-            Collections.sort(xLines, new Comparator<Line>() { // Sort xLines by xCoordinate
-                @Override
-                public int compare(Line l, Line l2) {
-                    return (int) (l2.x - l.x);
-                }
-            });
+            // Sort xLines by xCoordinate
+            xLines.sort((l, l2) -> (int) (l2.x - l.x));
 
             for (int x = 0; x <= highestX; x++) {
                 Line l = findLineStartingAt(xLines, x, y);
@@ -188,19 +184,15 @@ public class UnifiablePolyedge {
         // Merge successive vertical lines
         for (int x = 0; x <= highestX; x++) {
 
-            ArrayList<Line> yLines = new ArrayList<Line>();
+            ArrayList<Line> yLines = new ArrayList<>();
 
             for (Line w : verLines) {
                 if (w.x == x) {
                     yLines.add(w);
                 }
             }
-            Collections.sort(yLines, new Comparator<Line>() { // Sort yLines by y-coord
-                @Override
-                public int compare(Line l, Line l2) {
-                    return (int) (l2.y - l.y);
-                }
-            });
+            // Sort yLines by y-coord
+            yLines.sort((l, l2) -> (int) (l2.y - l.y));
 
             for (int y = 0; y <= highestY; y++) {
                 Line l = findLineStartingAt(yLines, x, y);

@@ -65,8 +65,7 @@ public class Vector2 {
     }
 
     public static Vector2 projectAOntoB(Vector2 a, Vector2 b) {
-        Vector2 p = new Vector2(a).scl(a.getDotProduct(b) / a.getMag2());
-        return p;
+        return new Vector2(a).scl(a.getDotProduct(b) / a.getMag2());
     }
 
     /**
@@ -266,8 +265,8 @@ public class Vector2 {
             return this;
         }
 
-        x = (float) (Math.random() * (1 + MathUtils.BoolToInt(xPos)) - 1 * MathUtils.BoolToInt(xNeg));
-        y = (float) (Math.random() * (1 + MathUtils.BoolToInt(yPos)) - 1 * MathUtils.BoolToInt(yNeg));
+        x = (float) (Math.random() * (1 + MathUtils.BoolToInt(xPos)) - MathUtils.BoolToInt(xNeg));
+        y = (float) (Math.random() * (1 + MathUtils.BoolToInt(yPos)) - MathUtils.BoolToInt(yNeg));
 
         return this;
     }
@@ -543,5 +542,19 @@ public class Vector2 {
      */
     public Vector2 cp() {
         return new Vector2(x, y);
+    }
+
+
+
+    public Vector2 rotate(Vector2 origin, float radians) {
+        float ox = origin.x;
+        float oy = origin.y;
+        float x = this.x - ox;
+        float y = this.y - oy;
+        double sine = Math.sin(radians);
+        double cosine = Math.cos(radians);
+        this.x = (float) (x * cosine - y * sine) + ox;
+        this.y = (float) (x * sine + y * cosine) + oy;
+        return this;
     }
 }
