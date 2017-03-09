@@ -10,17 +10,17 @@ import com.wilhelmsen.gamelib.utils.geom.Line;
  */
 public class Connection {
 
-  public StarNode start;
-  public StarNode end;
-  public float weight;
+    public StarNode start;
+    public StarNode end;
+    public float weight;
 
-  public Connection(StarNode start, StarNode end, float weight) {
-    this.start = start;
-    this.end = end;
-    this.weight = weight;
-  }
+    public Connection(StarNode start, StarNode end, float weight) {
+        this.start = start;
+        this.end = end;
+        this.weight = weight;
+    }
 
-  public Line getAsLine() {
-    return new Line(start.x, start.y, end.x, end.y);
-  }
+    public Line getAsLine() {
+        return new Line(start.x, start.y, end.x, end.y);
+    }
 }
