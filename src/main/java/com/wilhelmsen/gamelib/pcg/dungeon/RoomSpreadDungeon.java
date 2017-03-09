@@ -23,7 +23,7 @@ public class RoomSpreadDungeon {
         // Time-keeping (debugging)
         float timeStarted = System.nanoTime();
         float timeOnRoomsAndSeperation;
-        float timeOnTree;
+        float timeOnTree = 0;
         float timeOnCorridorsAndCollisions;
         float totalTimeUsed;
 
