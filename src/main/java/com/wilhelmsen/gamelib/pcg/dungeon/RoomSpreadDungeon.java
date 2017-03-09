@@ -18,7 +18,7 @@ import java.util.Random;
 public class RoomSpreadDungeon {
 
     public static RoomsWithTree roomSpreadFloor(int cells, int roomDimScalar, float maxRoomRatio,
-                                                Random rand) {
+                                                Random rand, boolean debugPrints) {
 
         // Time-keeping (debugging)
         float timeStarted = System.nanoTime();
@@ -40,20 +40,22 @@ public class RoomSpreadDungeon {
         //float maxRoomRatio = 2f;
 
         // Get random rooms
-        System.out.println("Generating rooms");
-        System.out.println("\tCells: " + cells);
-        System.out.println("\tDistribution: " + distributionScale);
-        System.out.println("\tRatio: " + 1 / maxRoomRatio + "-" + maxRoomRatio);
-
+        if (debugPrints) {
+            System.out.println("Generating rooms");
+            System.out.println("\tCells: " + cells);
+            System.out.println("\tDistribution: " + distributionScale);
+            System.out.println("\tRatio: " + 1 / maxRoomRatio + "-" + maxRoomRatio);
+        }
         ArrayList<Cell>
                 rooms =
                 getListRandomCells(cells, random, roomDimScalar, distributionScale, distributionScale,
                         maxRoomRatio);
+        if (debugPrints) {
+            System.out.println("Generating rooms finished. Time used so far: "
+                    + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
 
-        System.out.println("Generating rooms finished. Time used so far: "
-                + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
-
-        System.out.println("Seperating the rooms...");
+            System.out.println("Seperating the rooms...");
+        }
 
         // Separate rooms
         Intersect.separateCells(rooms, random, 0.01f);
@@ -61,10 +63,14 @@ public class RoomSpreadDungeon {
         for (Cell c : rooms) {
             c.rect.round();
         }
+
         timeOnRoomsAndSeperation = System.nanoTime() - timeStarted;
-        System.out.println("Finished seperating rooms. Time used so far: "
-                + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
-        System.out.println("Creating the tree...");
+
+        if (debugPrints) {
+            System.out.println("Finished seperating rooms. Time used so far: "
+                    + ((System.nanoTime() - timeStarted) / Math.pow(10, 9)) + " seconds");
+            System.out.println("Creating the tree...");
+        }
 
         // The outer most coordinates of rooms
         int[] bounds = findBounds(rooms);
@@ -87,10 +93,11 @@ public class RoomSpreadDungeon {
         for (int i = 0; i < rooms.size() / 10; i++) {
             biggerRooms.add(rooms.get(i));
         }
-
         // Tree
         MinimumSpanningTree tree = MinimumSpanningTree.createFromCells(biggerRooms);
-        timeOnTree = System.nanoTime() - timeStarted - timeOnRoomsAndSeperation;
+        if (debugPrints) {
+            timeOnTree = System.nanoTime() - timeStarted - timeOnRoomsAndSeperation;
+        }
 
         // Edges
         ArrayList<Line> edges = new ArrayList<>(tree.edges);
@@ -145,22 +152,25 @@ public class RoomSpreadDungeon {
                 }
             }
         }
-        System.out.println("Done adding corridors.");
-        timeOnCorridorsAndCollisions =
-                System.nanoTime() - timeStarted - timeOnRoomsAndSeperation - timeOnTree;
-        totalTimeUsed = System.nanoTime() - timeStarted;
-        System.out.println("FinalRooms in list: " + finalRooms.size() + ".");
 
-        System.out.println("Generating done. " + cells + " rooms placed and positioned. ");
-        System.out.println("Total amount of cells is " + finalRooms.size() + " for the whole map.");
-        System.out.println("Total time: " + totalTimeUsed / Math.pow(10, 9) + " seconds");
+        if (debugPrints) {
+            System.out.println("Done adding corridors.");
+            timeOnCorridorsAndCollisions =
+                    System.nanoTime() - timeStarted - timeOnRoomsAndSeperation - timeOnTree;
+            totalTimeUsed = System.nanoTime() - timeStarted;
+            System.out.println("FinalRooms in list: " + finalRooms.size() + ".");
 
-        System.out.println(
-                "Time on rooms and seperation: " + timeOnRoomsAndSeperation / Math.pow(10, 9) + " seconds. "
-                        +
-                        "\nTime on tree: " + timeOnTree / Math.pow(10, 9) + " seconds. " +
-                        "\nTime on Corridors and collisions: " + timeOnCorridorsAndCollisions / Math.pow(10, 9)
-                        + " seconds.");
+            System.out.println("Generating done. " + cells + " rooms placed and positioned. ");
+            System.out.println("Total amount of cells is " + finalRooms.size() + " for the whole map.");
+            System.out.println("Total time: " + totalTimeUsed / Math.pow(10, 9) + " seconds");
+
+            System.out.println(
+                    "Time on rooms and seperation: " + timeOnRoomsAndSeperation / Math.pow(10, 9) + " seconds. "
+                            +
+                            "\nTime on tree: " + timeOnTree / Math.pow(10, 9) + " seconds. " +
+                            "\nTime on Corridors and collisions: " + timeOnCorridorsAndCollisions / Math.pow(10, 9)
+                            + " seconds.");
+        }
         //map = new int[bounds[2] - bounds[0]][bounds[3] - bounds[1]];
         return new RoomsWithTree(tree, finalRooms, rooms, corridors);
     }
