@@ -10,7 +10,7 @@ import com.wilhelmsen.gamelib.utils.Vector2;
  */
 public interface Heuristic {
 
-  Vector2 goal = new Vector2();
+    Vector2 goal = new Vector2();
 
-  float estimate(StarNode from);
+    float estimate(StarNode from);
 }

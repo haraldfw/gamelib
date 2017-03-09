@@ -10,40 +10,40 @@ import com.wilhelmsen.gamelib.utils.Vector2;
  */
 public class Particle {
 
-  public Vector2 position;
-  public Vector2 velocity;
-  public Vector2 acceleration;
+    public Vector2 position;
+    public Vector2 velocity;
+    public Vector2 acceleration;
 
-  public float damping = 0;
+    public float damping = 0;
 
-  public float inverseMass;
+    public float inverseMass;
 
-  public Particle(float mass) {
-    position = new Vector2();
-    velocity = new Vector2();
-    acceleration = new Vector2();
-    inverseMass = 1 / mass;
-  }
-
-  public void integrate(float delta) {
-
-    if (inverseMass <= 0) {
-      return;
+    public Particle(float mass) {
+        position = new Vector2();
+        velocity = new Vector2();
+        acceleration = new Vector2();
+        inverseMass = 1 / mass;
     }
 
-    velocity.addScaledVector(acceleration, delta);
-    position.addScaledVector(velocity, delta);
-  }
+    public void integrate(float delta) {
 
-  public void setPosition(float x, float y) {
-    position.set(x, y);
-  }
+        if (inverseMass <= 0) {
+            return;
+        }
 
-  public void setVelocity(float x, float y) {
-    velocity.set(x, y);
-  }
+        velocity.addScaledVector(acceleration, delta);
+        position.addScaledVector(velocity, delta);
+    }
 
-  public void setAcceleration(float x, float y) {
-    acceleration.set(x, y);
-  }
+    public void setPosition(float x, float y) {
+        position.set(x, y);
+    }
+
+    public void setVelocity(float x, float y) {
+        velocity.set(x, y);
+    }
+
+    public void setAcceleration(float x, float y) {
+        acceleration.set(x, y);
+    }
 }

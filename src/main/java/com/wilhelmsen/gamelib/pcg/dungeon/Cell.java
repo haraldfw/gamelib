@@ -8,24 +8,24 @@ import com.wilhelmsen.gamelib.utils.geom.Rectangle;
  */
 public class Cell {
 
-  public Rectangle rect;
+    public Rectangle rect;
 
-  public Vector2 forceAccumulation;
+    public Vector2 forceAccumulation;
 
-  public Cell(Rectangle r) {
-    rect = r;
-    forceAccumulation = new Vector2();
-  }
+    public Cell(Rectangle r) {
+        rect = r;
+        forceAccumulation = new Vector2();
+    }
 
-  public void applyForces() {
-    rect.addToPosition(forceAccumulation);
-  }
+    public void applyForces() {
+        rect.addToPosition(forceAccumulation);
+    }
 
-  public void addForce(Vector2 force) {
-    forceAccumulation.add(force);
-  }
+    public void addForce(Vector2 force) {
+        forceAccumulation.add(force);
+    }
 
-  public void clearForceAccumulation() {
-    forceAccumulation.clear();
-  }
+    public void clearForceAccumulation() {
+        forceAccumulation.clear();
+    }
 }

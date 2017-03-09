@@ -56,31 +56,23 @@ public class WeaponGenerator {
 	 * stock and a barrel that is on fire that shoots fire-bullets.
 	 */
 
-  /*
-   * This class has methods to generate guns, and will return instances of the classes
-   * Melee or Ranged (maybe).
-   */
-  Random rand;
+    /*
+     * This class has methods to generate guns, and will return instances of the classes
+     * Melee or Ranged (maybe).
+     */
+    Random rand;
 
-  public WeaponGenerator() {
-    rand = new Random();
-  }
+    public WeaponGenerator() {
+        rand = new Random();
+    }
 
-  public File generateMeleeImage() {
-    File path = new File("");
+    public String generateGunName(float grade) {
+        return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
+                .getSuffix(rand, grade);
+    }
 
-    // Generate image from the stats given as parameters
-
-    return path;
-  }
-
-  public String generateGunName(float grade) {
-    return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
-        .getSuffix(rand, grade);
-  }
-
-  public String generateMeleeName(float grade) {
-    return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
-        .getSuffix(rand, grade);
-  }
+    public String generateMeleeName(float grade) {
+        return Ranged.getPrefix(rand, grade) + Ranged.type[rand.nextInt(Ranged.type.length)] + Ranged
+                .getSuffix(rand, grade);
+    }
 }

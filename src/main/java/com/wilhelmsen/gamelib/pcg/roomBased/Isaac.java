@@ -29,97 +29,97 @@ public final class Isaac {
                   /place secret-room/
   */
 
-  /**
-   * Generates a 2D array of Rooms
-   *
-   * @param amountOfRooms       How many rooms to place, *not* including all special rooms.
-   * @param chanceForLargeRooms Between 0 and 1. 0 will ensure all rooms stay 1by1. 1 will make all
-   *                            rooms bigger
-   * @param maxWidth            The max width of rooms
-   * @param maxHeight           The max height of rooms
-   * @return The generated map in a 2D Room-array.
-   */
-  public static RoomDef[] generate(int amountOfRooms, float chanceForLargeRooms, int amountOfEnds,
-                                   int maxWidth, int maxHeight, Random rng) {
-    // list for storing the rooms, this list is returned as an array at end of algo
-    ArrayList<RoomDef> rooms = new ArrayList<RoomDef>();
+    /**
+     * Generates a 2D array of Rooms
+     *
+     * @param amountOfRooms       How many rooms to place, *not* including all special rooms.
+     * @param chanceForLargeRooms Between 0 and 1. 0 will ensure all rooms stay 1by1. 1 will make all
+     *                            rooms bigger
+     * @param maxWidth            The max width of rooms
+     * @param maxHeight           The max height of rooms
+     * @return The generated map in a 2D Room-array.
+     */
+    public static RoomDef[] generate(int amountOfRooms, float chanceForLargeRooms, int amountOfEnds,
+                                     int maxWidth, int maxHeight, Random rng) {
+        // list for storing the rooms, this list is returned as an array at end of algo
+        ArrayList<RoomDef> rooms = new ArrayList<>();
 
-    // place spawnRoom
-    RoomDef spawn = new RoomDef(0, 0, 1, 1);
-    spawn.increaseMaxConnections(2);
-    rooms.add(spawn);
+        // place spawnRoom
+        RoomDef spawn = new RoomDef(0, 0, 1, 1);
+        spawn.increaseMaxConnections(2);
+        rooms.add(spawn);
 
-    while (rooms.size() <= amountOfRooms) {
+        while (rooms.size() <= amountOfRooms) {
 
-      // get random room from list that has open and available connections
-      RoomDef toBuildFrom;
+            // get random room from list that has open and available connections
+            RoomDef toBuildFrom;
 
-      int attempts = 0;
-      while (true) {
-        toBuildFrom = rooms.get(rng.nextInt(rooms.size()));
+            int attempts = 0;
+            while (true) {
+                toBuildFrom = rooms.get(rng.nextInt(rooms.size()));
 
-        if (toBuildFrom.canHaveMoreConnections()) {
-          break;
-        }
+                if (toBuildFrom.canHaveMoreConnections()) {
+                    break;
+                }
 
-        // if loop has had too many attempts
-        if (attempts > amountOfRooms) {
+                // if loop has had too many attempts
+                if (attempts > amountOfRooms) {
 
-          // find random room with an unclaimed door
-          RoomDef hasOpenWall;
+                    // find random room with an unclaimed door
+                    RoomDef hasOpenWall;
 
-          while (true) {
-            // choose a random room
-            hasOpenWall = rooms.get(rng.nextInt(rooms.size()));
-            if (hasOpenWall.canHaveMoreConnections()) {
-              hasOpenWall.increaseMaxConnections(1);
-              toBuildFrom = hasOpenWall;
-              break;
+                    while (true) {
+                        // choose a random room
+                        hasOpenWall = rooms.get(rng.nextInt(rooms.size()));
+                        if (hasOpenWall.canHaveMoreConnections()) {
+                            hasOpenWall.increaseMaxConnections(1);
+                            toBuildFrom = hasOpenWall;
+                            break;
+                        }
+                    }
+                }
+
+                attempts++;
             }
-          }
+
+            // get random door from selected room
+            DoorDef expanding = toBuildFrom.getRandomUnclaimedDoor(rng);
+
+            int x = expanding.leadsToX;
+            int y = expanding.leadsToY;
+            int width = 1;
+            int height = 1;
+
+            // randomly increase width and height
+            if (rng.nextFloat() < chanceForLargeRooms) {
+                width += Math.round(rng.nextFloat() * (float) maxWidth);
+                if (width > maxWidth) {
+                    width = maxWidth;
+                }
+                height += Math.round(rng.nextFloat() * (float) maxHeight);
+                if (height > maxHeight) {
+                    height = maxHeight;
+                }
+            }
+
+            // move room to cope with larger dimensions
+            if (x < toBuildFrom.x) {
+                x -= width + 1;
+            }
+            if (y < toBuildFrom.y) {
+                y -= height + 1;
+            }
+
+            // TODO check if there actually can be a room at the given location
+
+            // place a room with found variables and add it to the list
+            RoomDef placed = new RoomDef(x, y, width, height);
+            rooms.add(placed);
+
+            // connect doors
+            toBuildFrom.connectDoors(expanding, placed.getDoorTo(expanding.leadsToX, expanding.leadsToY));
         }
 
-        attempts++;
-      }
-
-      // get random door from selected room
-      DoorDef expanding = toBuildFrom.getRandomUnclaimedDoor(rng);
-
-      int x = expanding.leadsToX;
-      int y = expanding.leadsToY;
-      int width = 1;
-      int height = 1;
-
-      // randomly increase width and height
-      if (rng.nextFloat() < chanceForLargeRooms) {
-        width += Math.round(rng.nextFloat() * (float) maxWidth);
-        if (width > maxWidth) {
-          width = maxWidth;
-        }
-        height += Math.round(rng.nextFloat() * (float) maxHeight);
-        if (height > maxHeight) {
-          height = maxHeight;
-        }
-      }
-
-      // move room to cope with larger dimensions
-      if (x < toBuildFrom.x) {
-        x -= width + 1;
-      }
-      if (y < toBuildFrom.y) {
-        y -= height + 1;
-      }
-
-      // TODO check if there actually can be a room at the given location
-
-      // place a room with found variables and add it to the list
-      RoomDef placed = new RoomDef(x, y, width, height);
-      rooms.add(placed);
-
-      // connect doors
-      toBuildFrom.connectDoors(expanding, placed.getDoorTo(expanding.leadsToX, expanding.leadsToY));
+        return (RoomDef[]) rooms.toArray();
     }
-
-    return (RoomDef[]) rooms.toArray();
-  }
 }
